@@ -14,6 +14,16 @@ This algorithm allows for studying the effect of SNVs on categorical traits, tha
 2. It simultaneously accounts for the patient's outcome and ancestry by means of kernels functions, minimizing the confounding for population structures.
 
 
+## Installation
+
+Install the latest version of cnmtf from this github repository:
+
+`install.packages("devtools")`
+`devtools::install_github("lgl15/cnmtf")`
+
+
+## What is inside?
+
 The cnmtf package provides four categories of functions for preprocessing data, clustering, scoring SNVs and comparing results.
 
 * **Preprocessing functions:**
