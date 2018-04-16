@@ -1,11 +1,20 @@
 Package: cnmtf
-Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Prioritisation of single nucleotide variants using Corrected non-negative matrix tri-factorisation
+Version: 1.0.0
+Authors@R: person("Leal", "Luis G.", email = "lgl15@imperial.ac.uk", role = c("aut", "cre"))
+Description: This is data fusion algorithm for prioritising reliable associations between SNVs and traits.
+    This algorithm, called Corrected Non-negative Matrix Factorization (cNMTF),  allows for studying the effect of single nucleotide variants on categorical traits, thanks to its main features :
+    1) It captures the interrelatedness between variants data, the SNVs deleteriousness effect and the protein-protein interactions (PPIs) that might be disrupted.
+    2) It simultaneously accounts for the patient's outcome and ancestry by means of kernels functions, minimizing the confounding for population structures.
+Depends: R (>= 3.3.2)
+License: Common Public License.
 Encoding: UTF-8
 LazyData: true
+Imports:
+    ade4,
+    doParallel,
+    igraph,
+    LDcorSV,
+    snpStats,
+    VennDiagram,
+RoxygenNote: 6.0.1
