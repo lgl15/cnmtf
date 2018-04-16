@@ -19,3 +19,12 @@ devtools::document()
 devtools::install()
 
 7. Distribute the package through GitHub
+
+	Follow instructions from 
+	https://www.r-bloggers.com/rstudio-and-github/
+
+8. Push files to github
+
+change working directory to the location of the package.
+Then run:
+git push -u origin master
