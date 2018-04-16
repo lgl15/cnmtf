@@ -18,8 +18,11 @@ This algorithm allows for studying the effect of SNVs on categorical traits, tha
 
 Install the latest version of cnmtf from this github repository:
 
-`install.packages("devtools")`
-`devtools::install_github("lgl15/cnmtf")`
+```
+install.packages("devtools")
+
+devtools::install_github("lgl15/cnmtf")
+```
 
 
 ## What is inside?
