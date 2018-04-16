@@ -1,0 +1,21 @@
+
+1. Install packages to develope my own package.
+
+install.packages("devtools")
+install.packages("roxygen2")
+
+2. Create the directory, folders and files by default:
+
+devtools::create("myfirstpackage")
+
+3. Add R functions in files .R
+4. Document the functions #'
+5. Compile the documentation
+
+devtools::document()
+
+6. Install the packages
+
+devtools::install()
+
+7. Distribute the package through GitHub
