@@ -1,11 +1,11 @@
 
 
 
-# R package *cntmf*
+# R package *cnmtf*
 # Prioritisation of single nucleotide variants using Corrected non-negative matrix tri-factorisation
 
 
-A data fusion framework for prioritising reliable associations between single nucleotide variants (SNVs) and traits.
+cNMTF is a data fusion framework for prioritising reliable associations between single nucleotide variants (SNVs) and diseases.
 
 This algorithm allows for studying the effect of SNVs on categorical traits, thanks to its main features :
 
