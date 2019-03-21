@@ -45,7 +45,9 @@ A set of functions to score SNVs and prioritise significant SNV-trait associatio
 
 Auxiliary functions to compare your results across different settings of the algorithm.
 
-
+## Guidelines ##
+https://lgl15.github.io/cnmtf_web/index.html
 Author: *Luis G. Leal, lgl15@imperial.ac.uk*
+
 
 
