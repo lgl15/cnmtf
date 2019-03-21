@@ -14,7 +14,7 @@
 #'
 #[Input]:
 #' @param R Relationship matrix
-#' @param out.cat Categorical outcome variable
+#' @param out Categorical outcome variable
 #' @param pop Population variable
 #' @param log.file Log file to track progress of the function
 
@@ -24,7 +24,7 @@
 #' @param work.dat Folder to save and load workspaces
 
 #Number of clusters
-#' @param define.k  Method to define \code{k1}. It can be: \code{c("user","NMTF","PCA")}
+#' @param define.k  Method to define \code{k1}. It can be: \code{c("user","method","PCA")}
 #' @param k1 Number of SNV clusters
 #' @param k2 Number of patient clusters equals number of levels in the outcome
 
@@ -61,7 +61,7 @@
 #[Output]:
 #' @return The function internally generates:
 #' * Estimation of number of SNP clusters (k1)
-#' * Estimation of penalisation parameters (alpha1, alpha2, gamma1, gamma2)
+#' * Estimation of penalisation parameters (gamma1, gamma3, gamma2)
 #'
 #' The function prints the following objects in workspaces:
 #' * Initialisation of matrices U.init and V.init
@@ -74,7 +74,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	score.cnmtf = function( R, #Relationship matrix
-	                        out.cat = NULL, #Categorical outcome variable
+	                        out = NULL, #Categorical outcome variable
 	                        pop = NULL, #Population variable
 													log.file = NULL,
 
@@ -144,7 +144,7 @@
 
 				  msg <- paste("\n", "Setting numbers of clusters by ", define.k, "\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
 
-				  if(define.k == "NMTF"){ #Define number of SNP clusters based on dispersion coefficient of connectivity matrix
+				  if(define.k == "method"){ #Define number of SNP clusters based on dispersion coefficient of connectivity matrix
 
 				  	#Define list of parameters to evaluate if not provided
 				  	#If any of the parameters is fixed, its list will be of length 1
@@ -178,7 +178,7 @@
 
 
 				    #Set number of iterations/id, repetitions of the algorithm and parameters = 0
-				    lparameters.0 = list(alpha1 = 0, alpha2 = 0, gamma1 = 0, gamma2 = 0)
+				    lparameters.0 = list(gamma1 = 0, gamma3 = 0, gamma2 = 0)
 
 				    #Initialize U and V matrices for the highest number of clusters to evaluate
 				    if(init == 1){
@@ -195,21 +195,21 @@
 
 
 				    #Create table of results for rho coefficients at each setting of parameters
-				    t.res = matrix(NA, nrow = length(lk1) * length(lk2), ncol = 5) #res.clust = list()
+				    t.res = matrix(NA, nrow = length(lk1) * length(lk2), ncol = 5)
 				    z = 1 #Counter variable
 
 				    #Run the algorithm for each setting of SNP-Patient clusters k1 and k2
-				    for(m in nk1:1){
+				    for(e in nk1:1){
 				      for(q in nk2:1){
 
-				      	msg <- paste("Evaluating setting: k1 = ", lk1[m], ", k2 = ", lk2[q], "\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
+				      	msg <- paste("Evaluating setting: k1 = ", lk1[e], ", k2 = ", lk2[q], "\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
 
 				      	#Set the parameters and aux. imput matrices
-				      	k = c(lk1[m], lk2[q])
+				      	k = c(lk1[e], lk2[q])
 
 				      	#Filter columns of initialisation matrices
 				      	if(init == 1){
-				      		U.init = U.init.max[,1:lk1[m]]
+				      		U.init = U.init.max[,1:lk1[e]]
 				      		V.init = V.init.max[,1:lk2[q]]
 				      	}
 
@@ -243,7 +243,8 @@
 				    dev.off()
 
 				    #Define optimum k1
-				    decision.k1k2 = as.numeric(readline("Check plot and input optimum k1:") )
+				    cat("A plot was created in your work.data folder ( k1k2_name.exp.pdf ).")
+				    decision.k1k2 = as.numeric(readline("Check that plot and input optimum k1:" ))
 				    if(decision.k1k2 > 0){
 				    	k1 = decision.k1k2
 				    }else{
@@ -252,7 +253,7 @@
 				    }
 
 				    #Define optimum k2
-				    decision.k1k2 = as.numeric(readline("Check plot and input optimum k2:") )
+				    decision.k1k2 = as.numeric(readline("Now select optimum k2:") )
 				    if(decision.k1k2 > 0){
 				    	k2 = decision.k1k2
 				    }else{
@@ -314,7 +315,7 @@
 
 
 				  #Construct the SNP-SNP network and calculate its laplacian matrix
-				  if( "alpha1" %in% set.wparameters ){
+				  if( "gamma1" %in% set.wparameters ){
 
 				  	#Load workspace with Wu and Gu
 				  	if( file.exists(file.Gu)){
@@ -357,21 +358,9 @@
 				    Wu = NULL
 				  }
 
-				  #Construct the Patient-Patient  network and calculate its laplacian matrix
-				  if( "alpha2" %in% set.wparameters ){
-
-				    msg <- paste("Constructing the Patient-Patient network","\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
-				    Wv = matrix(0, nrow = m, ncol = m)
-				    Dv = diag(rowSums(Wv))
-				    Lv = Dv - Wv
-
-
-				  }else{
-				    Wv = NULL
-				  }
 
 				  #Calculate the Side information kernel matrix (L) and the centering matrix
-				  if( "gamma1" %in% set.wparameters ){
+				  if( "gamma3" %in% set.wparameters ){
 
 				    msg <- paste("Calculating the Side information kernel matrix (L) and the centering matrix (H)","\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
 				    res.kernels = kernels.cnmtf(R,"unknown")#kernels.cnmtf(R,pop) #
@@ -386,11 +375,11 @@
 				  #Construct the outcome matrix
 				  if( "gamma2" %in% set.wparameters ){
 
-				    if( is.null(out.cat) ){
+				    if( is.null(out) ){
 				    	stop("The outcome vector is NULL.")
 				    }
 				  	msg <- paste("Calculating the prior-knowledge matrix for patients (Vo)","\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
-				    Vo = construct.Vo( out.cat, k[2])
+				    Vo = construct.Vo( out, k[2])
 				    msg <- paste("Dimensions of input Vo:", nrow(Vo), ncol(Vo),"\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
 
 
@@ -420,7 +409,7 @@
 				  if( estimate.par == TRUE){
 
 				  	lparameters = parameters.cnmtf( R = R, #Relationship matrix
-				  																out.cat = out.cat, #Categorical outcome variable
+				  																out = out, #Categorical outcome variable
 				  																pop = pop, #Population variable
 				  																k = k, #Number of clusters
 				  																log.file = log.file,
@@ -476,7 +465,7 @@
 
 				  if( save.parameters == TRUE ){
 				  	#Save parameters to file
-				  	save(list = c("lparameters"), file = paste( substr( path.exp, start = 1, stop = nchar(path.exp) - nchar(name.exp) - 1 )  , trait.project, "/", trait.project, "_parameters.RData",sep=""))
+				  	save(list = c("lparameters"), file = paste( work.dat, "parameters.RData",sep=""))
 				  }
 
 
@@ -505,12 +494,12 @@
 
 
 				    #Run algorithm for experiment
-				    res.cnmtf[[1]] = consensus.clust(R=R,
-				                                     Wv=Wv, Wu=Wu,
-				                                     HLH=HLH, Vo=Vo,
-				                                     k=k, lparameters=lparameters,
+				    res.cnmtf[[1]] = consensus.clust(R = R,
+				                                     Wv = Wv, Wu = Wu,
+				                                     HLH = HLH, Vo = Vo,
+				                                     k=k, lparameters = lparameters,
 				                                     iters = iters,
-				                                     labelsU=labelsU, labelsV=labelsV,
+				                                     labelsU = labelsU, labelsV=labelsV,
 				                                     run.t = run.t, calcObj = calcObj, calcObj2 = calcObj2,
 				                                     init = init, parallel.opt = parallel.opt, n.cores = n.cores,
 				                                     set.alg = NULL, export.res = FALSE,
@@ -522,8 +511,8 @@
 
 
 				    #Check clustering of patients
-				    if( !is.null(out.cat) ){
-				    	table(out.cat,res.cnmtf[[1]][[3]][,2] )
+				    if( !is.null(out) ){
+				    	table(out,res.cnmtf[[1]][[3]][,2] )
 				    }
 
 				  }
@@ -566,6 +555,8 @@
 							        Rr <- R[, sample(1:m, size = m, replace = FALSE)]
 
 
+
+
 							        #Perform consensus clustering
 							        res.alg.ran =  consensus.clust(R=Rr,
 							                                       Wv=Wv, Wu=Wu,
@@ -594,6 +585,7 @@
 
 				        #Randomize the R matrix
 				        Rr <- R[, sample(1:m, size = m, replace = FALSE)]
+				        print(dim(Rr))
 
 				        #Perform consensus clustering
 				        l.cnmtf.ran[[ran]] = consensus.clust(R=Rr,

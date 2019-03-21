@@ -22,6 +22,7 @@
 #' @md
 #' @author Luis G. Leal, \email{lgl15@@imperial.ac.uk}
 #' @family Preprocessing functions
+#' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

@@ -147,7 +147,7 @@
 
 			  #Initialize vectors to estimate maximum penalisation terms
 			    if(estimate.penalisation == TRUE) {
-			    	malpha1 = malpha2 = mgamma1 = mgamma2 <- rep(0, run.t) #Vectors of maximum estimatedparameters at each run
+			    	mgamma1 = mgamma3 = mgamma2 <- rep(0, run.t) #Vectors of maximum estimatedparameters at each run
 			    }
 
 			  #Extract results of each run
@@ -198,19 +198,12 @@
 			      	#Compute parameters
 			      	for(q in 1:length(unlist(lparameters) )){
 
-			      			if( names(unlist(lparameters) )[q] == "alpha1" & !is.null(Wu)){
-			      				cat("Finding maximum alpha1 at repetition",i,"\n")
+			      			if( names(unlist(lparameters) )[q] == "gamma1" & !is.null(Wu)){
+			      				cat("Finding maximum gamma1 at repetition",i,"\n")
 			      				Du = diag(rowSums(Wu))
 			      				Lu = Du - Wu
-			      				malpha1[i] = tmain / sum( diag(t(Ui) %*% Lu %*% Ui) )
-			      				cat("Maximum alpha1:", malpha1[i],"\n")
-			      			}
-
-			      			if( names(unlist(lparameters) )[q] == "alpha2" & !is.null(Wv)){
-			      				cat("Finding maximum alpha2 at repetition",i,"\n")
-			      				Dv = diag(rowSums(Wv))
-			      				Lv = Dv - Wv
-			      				malpha2[i] = tmain / sum( diag( t(Vi) %*% Lv %*% Vi) )
+			      				mgamma1[i] = tmain / sum( diag(t(Ui) %*% Lu %*% Ui) )
+			      				cat("Maximum gamma1:", mgamma1[i],"\n")
 			      			}
 
 
@@ -221,10 +214,10 @@
 
 			      			}
 
-				      		if( names(unlist(lparameters) )[q] == "gamma1" & !is.null(HLH) ){
-				      			cat("Finding maximum gamma1 at repetition",i,"\n")
-				      			mgamma1[i] =  tmain / sum( diag(Vi %*% t(Vi) %*% HLH) )
-				      			cat("Maximum gamma1:", mgamma1[i],"\n")
+				      		if( names(unlist(lparameters) )[q] == "gamma3" & !is.null(HLH) ){
+				      			cat("Finding maximum gamma3 at repetition",i,"\n")
+				      			mgamma3[i] =  tmain / sum( diag(Vi %*% t(Vi) %*% HLH) )
+				      			cat("Maximum gamma3:", mgamma3[i],"\n")
 
 				      		}
 
@@ -320,12 +313,12 @@
 				    	#Plot vectors of parameters
 				    		#X11()
 				    		par(mfrow = c(1,4))
-				    		boxplot(malpha1,main = "alpha1", las = 2); boxplot(malpha2,main = "alpha2", las = 2)
-				    		boxplot(mgamma1,main = "gamma1", las = 2); boxplot(mgamma2,main = "gamma2", las = 2)
+				    		boxplot(mgamma1,main = "gamma1", las = 2);
+				    		boxplot(mgamma3,main = "gamma3", las = 2); boxplot(mgamma2,main = "gamma2", las = 2)
 
 				    	#Return median value of parameters as the maximum
-				    	max.parameters = list(alpha1 = c(0,median(malpha1)), alpha2 = c(0,median(malpha2)),
-				    												gamma1 = c(0,median(mgamma1)), gamma2 = c(0,median(mgamma2)))
+				    	max.parameters = list(gamma1 = c(0,median(mgamma1)),
+				    												gamma3 = c(0,median(mgamma3)), gamma2 = c(0,median(mgamma2)))
 
 				    }else{
 				    	max.parameters = NULL

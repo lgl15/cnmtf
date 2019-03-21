@@ -14,7 +14,7 @@
 #'
 #[Input]
 #' @param R Relationship matrix
-#' @param out.cat  Categorical outcome variable
+#' @param out  Categorical outcome variable
 #' @param pop Population variable
 #' @param k Number of clusters
 #' @param log.file Log file to track status of the function
@@ -55,7 +55,7 @@
 #' @param snps.known List of known associations
 #'
 #[Output]
-#' @return \code{opt.parameters} list of optimal parameters fitted: \code{gamma1, gamma2, gamma3}
+#' @return \code{opt.parameters} list of optimal parameters fitted: \code{gamma3, gamma2, gamma3}
 #'
 #' @md
 #' @author Luis G. Leal, \email{lgl15@@imperial.ac.uk}
@@ -63,7 +63,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	parameters.cnmtf = function(  R, #Relationship matrix
-	                              out.cat = NULL, #Categorical outcome variable
+	                              out = NULL, #Categorical outcome variable
 	                              pop = NULL, #Population variable
 	                              k, #Number of clusters
 																log.file = NULL,
@@ -100,7 +100,7 @@
 																display.iters = TRUE, #Display the iterations of function cnmtf
 
 																#Gamma2 auxiliar plot of known associations
-																tao.sc  = 4, #Trehsold of standard deviations for the SNV score
+																tao.sc  = 4, #Treshold of standard deviations for the SNV score
 																snps.known = NULL #List of known associaitons (P)
 
 
@@ -111,7 +111,7 @@
 
 
 		#Set the penalisation parameters to 0
-		opt.parameters = list(alpha1 = 0, alpha2 = 0, gamma1 = 0, gamma2 = 0)
+		opt.parameters = list(gamma1 = 0, gamma3 = 0, gamma2 = 0)
 
 
 			#Check if tracking clusters on PCs space
@@ -149,7 +149,7 @@
 	                                          HLH = HLH, Vo = Vo,
 	                                          k=k, lparameters = opt.parameters,
 	                                          iters = iters,
-	                                          labelsU= rownames(R), labelsV=colnames(R),
+	                                          labelsU = rownames(R), labelsV=colnames(R),
 	                                          run.t = run.t.par, calcObj = calcObj, calcObj2 = calcObj2,
 	                                          init = init, parallel.opt = parallel.opt, n.cores = n.cores,
 	                                          V.init = V.init, U.init = U.init,
@@ -167,7 +167,7 @@
 
 		#Set the parameters in the following order # param.i = "gamma2"
 
-			for(param.i in c("gamma2","gamma1","alpha2","alpha1")){
+			for(param.i in c("gamma2","gamma3","gamma1")){
 
 							#Extract the weight (information contribution) for this parameter
 							ww = as.numeric(wparameters[names(wparameters) %in% param.i])
@@ -196,8 +196,8 @@
 		    					opt.parameters[ names(range.parameters) %in% 	param.i ] = range.i
 
 
-		    					#Set gamma1 to be maximum 1 so it doesnt mess up the objective function
-		    					if( param.i == "gamma1" ){
+		    					#Set gamma3 to be maximum 1 so it doesnt mess up the objective function
+		    					if( param.i == "gamma3" ){
 
 		    						msg <- paste("Optimum value for", param.i, "must be maximum 1. Setting this parameter to", min(1, range.i), "\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
 		    						opt.parameters[ names(range.parameters) %in% 	param.i ] <- min(1, range.i)
@@ -220,8 +220,8 @@
 									opt.parameters[ names(range.parameters) %in% 	param.i ] = max(range.i)
 
 
-									#Set gamma1 to be maximum 1 so it doesnt mess up the objective function
-									if( param.i == "gamma1" ){
+									#Set gamma3 to be maximum 1 so it doesnt mess up the objective function
+									if( param.i == "gamma3" ){
 
 										msg <- paste("Optimum value for", param.i, "must be maximum 1. Setting this parameter to", min(1, max(range.i)), "\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
 										opt.parameters[ names(range.parameters) %in% 	param.i ] <- min(1, max(range.i))
@@ -239,8 +239,8 @@
 							#Number of parameter values to evaluate
 							max.try <- max.try0
 
-							#For gamma1 the range is predefined between 0 and 2
-							if( param.i == "gamma1" ){
+							#For gamma3 the range is predefined between 0 and 1
+							if( param.i == "gamma3" ){
 								range.i[1] <- 0
 								range.i[2] <- 1
 							}
@@ -275,14 +275,14 @@
 									y.max = 1
 									do.U.par = FALSE
 
-							}else if(param.i %in% c("alpha1")){
+							}else if(param.i %in% c("gamma1")){
 
 										y.name = "Total node degree"
 										y.max = sum(igraph::degree(Gu)) #Sum up node degrees in the graph
 										do.U.par = TRUE
 
 
-	            }else if(param.i %in% c("gamma1")){
+	            }else if(param.i %in% c("gamma3")){
 
 	            		#If gamma2 was set, then the tracking variable is the simVO
 	            		if( ww.gamma2  == 0) { #<---Check this
@@ -312,7 +312,7 @@
 	              lparameters.pp = 	opt.parameters
 	            }else{
 	              #All penalisation parameters are equal to 0 and only the parameter pp is updated in the loop
-	              lparameters.pp = list(alpha1 = 0, alpha2 = 0, gamma1 = 0, gamma2 = 0)
+	              lparameters.pp = list(gamma1 = 0, gamma3 = 0, gamma2 = 0)
 	            }
 
 
@@ -344,9 +344,9 @@
 
 
 
-	                  #Tracking gamma1
+	                  #Tracking gamma3
 
-	                  if(param.i == "gamma1"){
+	                  if(param.i == "gamma3"){
 
 	                  	#If gamma2 was set previously the tracking variable is simVO
 	                  	if(  ww.gamma2 == 0){ #<--- Check this
@@ -355,9 +355,9 @@
 	                  		cat("SimVL", compare(as.numeric(as.factor(pop)) [pop!="Unknown"], as.numeric(res.param[[3]][,2]) [pop!="Unknown"], method  =  c("nmi")), "\n")
 
 	                  		#Calculate similarity cluster-outcome
-	                  		y[pp] = compare(as.numeric(as.factor(out.cat)), as.numeric(res.param[[3]][,2]), method  =  c("nmi"))
+	                  		y[pp] = compare(as.numeric(as.factor(out)), as.numeric(res.param[[3]][,2]), method  =  c("nmi"))
 
-	                  	}else{ #If only seting gamma1 the tracking variable is simVL
+	                  	}else{ #If only seting gamma3 the tracking variable is simVL
 
 	                  		#Calculate similarity cluster-population
 	                  		y[pp] = compare(as.numeric(as.factor(pop)) [pop!="Unknown"], as.numeric(res.param[[3]][,2]) [pop!="Unknown"], method  =  c("nmi"))
@@ -368,10 +368,10 @@
 
 	                  }
 
-	                  #Tracking alpha1
+	                  #Tracking gamma1
 
 	                  #Calculate average clustering coefficient / average node degree at each SNP cluster
-	                  if(param.i == "alpha1"){
+	                  if(param.i == "gamma1"){
 
 												#Define list variable to save the node degree per cluster of SNPs
 			                  lkd =  list()
@@ -395,7 +395,7 @@
 	                  	cat("SimVL", compare( as.numeric(as.factor(pop)) [pop!="Unknown"], as.numeric(res.param[[3]][,2]) [pop!="Unknown"], method  =  c("nmi")), "\n")
 
 	                  	#Calculate similarity cluster-outcome
-	                  	y[pp] = compare( as.numeric(as.factor(out.cat)), as.numeric(res.param[[3]][,2]), method  =  c("nmi"))
+	                  	y[pp] = compare( as.numeric(as.factor(out)), as.numeric(res.param[[3]][,2]), method  =  c("nmi"))
 
 
 	                  }
@@ -432,7 +432,7 @@
 		                  		y.min = y[1]
 
 		                  	#If gamma2 was not set previously the tracking variable is simVL
-		                  		if(param.i %in% c("gamma1") & ww.gamma2 == 0){
+		                  		if(param.i %in% c("gamma3") & ww.gamma2 == 0){
 		                  			y.max = y[1]
 		                  			y.min = 0
 		                  		}
@@ -491,12 +491,14 @@
 
 
 	            #Estimating optimal parameters and ploting changes in parameter versus tracking variable
-		            (opt.param.i = plot.parameter(x = vparam.i, y = y, y.max = y.max, y.name = y.name, range.fit = range.fit, log.file = log.file,
+		            print(vparam.i)
+		            print(y)
+		            (opt.param.i = plot.parameter(x = as.numeric(vparam.i), y = y, y.max = y.max, y.name = y.name, range.fit = if( param.i == "gamma3") { c(range.fit[2], range.fit[1]) }else{ range.fit }, log.file = log.file,
 	  	                                            x.name = param.i, fitmodel = T, ww = ww, print.file = paste(work.dat,"parameter_", param.i ,"_", name.exp,".pdf",sep="")))
 
 		          #For all the parameters creates an auxiliar plot with the number of known associations retrieved
-	             	plot.parameter(x = vparam.i, y = y2, logarithm.x = TRUE, y.max = length(snps.known), y.name = "Known associations retrieved (TP)",
-	            								 x.name = param.i, fitmodel = F, print.file = paste(work.dat,"parameter_", param.i ,"_", name.exp,"_known.pdf",sep=""))
+	             	#plot.parameter(x = vparam.i, y = y2, logarithm.x = TRUE, y.max = length(snps.known), y.name = "Known associations retrieved (TP)",
+	            	#							 x.name = param.i, fitmodel = F, print.file = paste(work.dat,"parameter_", param.i ,"_", name.exp,"_known.pdf",sep=""))
 
 
 		          #Show the optimum param.i to user:
@@ -576,7 +578,7 @@
 					par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(4, 1, 0))
 				}
 
-		    plot(x.plot, y.plot, col="black", log = log.x , las = 1, ylab = y.name, xlab = x.name, ylim = c(min(y, na.rm = T),y.max))
+		    #plot(x.plot, y.plot, col="black", log = log.x , las = 1, ylab = y.name, xlab = x.name, ylim = c(min(y, na.rm = T),y.max))
 
 		  #Fit a model or return NULL
 	    if(fitmodel == FALSE){

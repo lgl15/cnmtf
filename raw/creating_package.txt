@@ -20,11 +20,22 @@ devtools::install()
 
 7. Distribute the package through GitHub
 
-	Follow instructions from 
+	Follow instructions from
 	https://www.r-bloggers.com/rstudio-and-github/
 
 8. Push files to github
 
+git remote add origin https://github.com/lgl15/cnmtf_web.git
+git remote add origin https://github.com/lgl15/cnmtf-webpage.git
+
 change working directory to the location of the package.
 Then run:
 git push -u origin master
+
+Creating a webpage
+
+1. Tuturial
+https://jules32.github.io/rmarkdown-website-tutorial/first_observations.html
+
+install.packages('rmarkdown')
+library(rmarkdown)

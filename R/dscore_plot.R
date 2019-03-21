@@ -149,23 +149,14 @@
 
 
 							}
-							if(!is.null(kd.snps)){
 
-								#Vector of colours based on node degree
-								kd.snps = kd.snps[ match( On.snps, names(kd.snps)) ] #Filter vector
-								kd.snps = kd.snps[ match.On ] #Order vector
-								llevels[[3]] = levels(as.factor( kd.snps ))
-								color.levels[[3]] = colorRampPalette(c("lightgray", "darkblue"))( nlevels( as.factor( kd.snps ) ) ) #terrain.colors( nlevels( as.factor( kd.snps ) ))
-								lcolor[[3]] = color.levels[[3]][ as.factor( kd.snps ) ] #c(NA,"blue","blue")[ as.factor( kd.snps ) ]
-
-							}
 							if(!is.null(snps.fp.lrm)){
 
 								#Vector of colours based on potential false positives
 								snps.fp.lrm = snps.fp.lrm[ match( On.snps, names(snps.fp.lrm)) ] #Filter vector
 								snps.fp.lrm = snps.fp.lrm[ match.On ] #Order vector
-								lcolor[[4]] <- lcolor[[1]]
-								lcolor[[4]][ snps.fp.lrm == "FP" ] <- "brown"
+								lcolor[[3]] <- lcolor[[1]]
+								lcolor[[3]][ snps.fp.lrm == "FP" ] <- "brown"
 
 							}
 
@@ -214,7 +205,8 @@
 											points(y = sd.sc[ match.On ][pos.snps.known2], x = pos.snps.known2, pch = 10, col = "green")
 										}
 
-										if(lc %in% c(2,3)){
+										print(lc)
+										if(lc %in% c(2)){
 											legend(x = 1,y = 12, legend = llevels[[lc]], fill = color.levels[[lc]])
 										}
 
@@ -273,11 +265,6 @@
 																									imagetype="png" ,
 																									resolution = 300,
 																									compression = "lzw",
-																									lty = 'blank',
-																									fill = c('blue', 'orange', 'green'),
-																									cex = rep(2,7),
-																									cat.cex = 2,
-																									cat.pos = c(0, 0, 180 ),
 																									margin = 0.1)
 
 											plot.new()

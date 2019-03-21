@@ -1,0 +1,237 @@
+
+ 
+ Running experiment my_experiment 
+ 2018-04-18 16:49:06 
+Dimensions of input R: 100 50 
+ 2018-04-18 16:49:06 
+
+ Setting numbers of clusters by  user 
+ 2018-04-18 16:49:06 
+Number of clusters set to: 10 2 
+ 2018-04-18 16:49:06 
+
+ Setting penalisation parameters  
+ 2018-04-18 16:49:06 
+Workspace with SNP-SNP network was found. 
+ 2018-04-18 16:49:06 
+Dimensions of input Wu: 100 100 
+ 2018-04-18 16:49:06 
+Calculating the Side information kernel matrix (L) and the centering matrix (H) 
+ 2018-04-18 16:49:06 
+Calculating the prior-knowledge matrix for patients (Vo) 
+ 2018-04-18 16:49:06 
+Dimensions of input Vo: 50 2 
+ 2018-04-18 16:49:06 
+Random initialisation of matrices U and V 
+ 2018-04-18 16:49:06 
+
+ 
+ Fitting range of parameters. 
+ 2018-04-18 16:49:06 
+Range of parameters fitted to: c(0, 76.9748418295071) 
+ 2018-04-18 16:49:06 
+ Range of parameters fitted to: c(0, 12.6449573272837) 
+ 2018-04-18 16:49:06 
+ Range of parameters fitted to: c(0, 12.3409663915666) 
+ 2018-04-18 16:49:06 
+
+ Setting gamma2 
+ 2018-04-18 16:49:06 
+Max Similarity Cluster-Outcome : 1 
+ 2018-04-18 16:49:06 
+List of parameters gamma2 to evaluate:  0, 12.3409663915666, 1, 0.1 
+ 2018-04-18 16:49:06 
+Setting gamma2 to 0 
+ 2018-04-18 16:49:06 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:07 
+Number of known associations retrieved : 0, NA, NA, NA 
+ 2018-04-18 16:49:07 
+Tracked variable Similarity Cluster-Outcome : 0.01, NA, NA, NA 
+ 2018-04-18 16:49:07 
+Setting gamma2 to 12.3409663915666 
+ 2018-04-18 16:49:07 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:07 
+Number of known associations retrieved : 0, 0, NA, NA 
+ 2018-04-18 16:49:07 
+Tracked variable Similarity Cluster-Outcome : 0.01, 1, NA, NA 
+ 2018-04-18 16:49:07 
+Setting gamma2 to 1 
+ 2018-04-18 16:49:07 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:07 
+Number of known associations retrieved : 0, 0, 0, NA 
+ 2018-04-18 16:49:07 
+Updated list of parameter gamma2 to evaluate: 0, 12.34, 1, 9.51, 6.67, 3.84 
+ 2018-04-18 16:49:07 
+Sub-range to fit gamma2 : 12.3409663915666 
+ 2018-04-18 16:49:07 
+ Sub-range to fit gamma2 : 1 
+ 2018-04-18 16:49:07 
+Tracked variable Similarity Cluster-Outcome : 0.01, 1, 0, NA 
+ 2018-04-18 16:49:07 
+Setting gamma2 to 9.50572479367493 
+ 2018-04-18 16:49:07 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:08 
+Number of known associations retrieved : 0, 0, 0, 0 
+ 2018-04-18 16:49:08 
+Tracked variable Similarity Cluster-Outcome : 0.01, 1, 0, 1 
+ 2018-04-18 16:49:08 
+Setting gamma2 to 6.67048319578329 
+ 2018-04-18 16:49:08 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:08 
+Number of known associations retrieved : 0, 0, 0, 0, 0 
+ 2018-04-18 16:49:08 
+Tracked variable Similarity Cluster-Outcome : 0.01, 1, 0, 1, 1 
+ 2018-04-18 16:49:08 
+Setting gamma2 to 3.83524159789165 
+ 2018-04-18 16:49:08 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:09 
+Number of known associations retrieved : 0, 0, 0, 0, 0, 0 
+ 2018-04-18 16:49:09 
+Tracked variable Similarity Cluster-Outcome : 0.01, 1, 0, 1, 1, 0.2 
+ 2018-04-18 16:49:09 
+Optimum gamma2 was found to be 10.3070694415586 
+ 2018-04-18 16:49:09 
+
+ Setting gamma3 
+ 2018-04-18 16:49:09 
+Max Similarity Cluster-Population : 1 
+ 2018-04-18 16:49:09 
+List of parameters gamma3 to evaluate:  0, 1, 0.1, 0.01 
+ 2018-04-18 16:49:09 
+Setting gamma3 to 0 
+ 2018-04-18 16:49:09 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:09 
+Number of known associations retrieved : 0, NA, NA, NA 
+ 2018-04-18 16:49:09 
+Tracked variable Similarity Cluster-Population : 0.57, NA, NA, NA 
+ 2018-04-18 16:49:09 
+Setting gamma3 to 1 
+ 2018-04-18 16:49:09 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:09 
+Number of known associations retrieved : 0, 0, NA, NA 
+ 2018-04-18 16:49:09 
+Updated list of parameter gamma3 to evaluate: 0, 1, 0.25, 0.5, 0.75 
+ 2018-04-18 16:49:09 
+Sub-range to fit gamma3 : 0 
+ 2018-04-18 16:49:09 
+ Sub-range to fit gamma3 : 1 
+ 2018-04-18 16:49:09 
+Tracked variable Similarity Cluster-Population : 0.57, 0.62, NA, NA 
+ 2018-04-18 16:49:09 
+Setting gamma3 to 0.25 
+ 2018-04-18 16:49:09 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:09 
+Number of known associations retrieved : 0, 0, 0, NA 
+ 2018-04-18 16:49:09 
+Tracked variable Similarity Cluster-Population : 0.57, 0.62, 0.02, NA 
+ 2018-04-18 16:49:09 
+Setting gamma3 to 0.5 
+ 2018-04-18 16:49:09 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:09 
+Number of known associations retrieved : 0, 0, 0, 0 
+ 2018-04-18 16:49:09 
+Tracked variable Similarity Cluster-Population : 0.57, 0.62, 0.02, 0.14 
+ 2018-04-18 16:49:09 
+Setting gamma3 to 0.75 
+ 2018-04-18 16:49:09 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:10 
+Number of known associations retrieved : 0, 0, 0, 0, 0 
+ 2018-04-18 16:49:10 
+Tracked variable Similarity Cluster-Population : 0.57, 0.62, 0.02, 0.14, 0.39 
+ 2018-04-18 16:49:10 
+Optimum gamma3 was found to be 4.05435931647947 
+ 2018-04-18 16:49:10 
+
+ Setting gamma1 
+ 2018-04-18 16:49:10 
+Max Total node degree : 20 
+ 2018-04-18 16:49:10 
+List of parameters gamma1 to evaluate:  0, 76.9748418295071, 1, 0.1 
+ 2018-04-18 16:49:10 
+Setting gamma1 to 0 
+ 2018-04-18 16:49:10 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:10 
+Number of known associations retrieved : 0, NA, NA, NA 
+ 2018-04-18 16:49:10 
+Tracked variable Total node degree : 8, NA, NA, NA 
+ 2018-04-18 16:49:10 
+Setting gamma1 to 76.9748418295071 
+ 2018-04-18 16:49:10 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:10 
+Number of known associations retrieved : 0, 0, NA, NA 
+ 2018-04-18 16:49:10 
+Tracked variable Total node degree : 8, 16, NA, NA 
+ 2018-04-18 16:49:10 
+Setting gamma1 to 1 
+ 2018-04-18 16:49:10 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:11 
+Number of known associations retrieved : 0, 0, 0, NA 
+ 2018-04-18 16:49:11 
+Updated list of parameter gamma1 to evaluate: 0, 76.97, 1, 57.98, 38.99, 19.99 
+ 2018-04-18 16:49:11 
+Sub-range to fit gamma1 : 76.9748418295071 
+ 2018-04-18 16:49:11 
+ Sub-range to fit gamma1 : 1 
+ 2018-04-18 16:49:11 
+Tracked variable Total node degree : 8, 16, 8, NA 
+ 2018-04-18 16:49:11 
+Setting gamma1 to 57.9811313721303 
+ 2018-04-18 16:49:11 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:11 
+Number of known associations retrieved : 0, 0, 0, 0 
+ 2018-04-18 16:49:11 
+Tracked variable Total node degree : 8, 16, 8, 20 
+ 2018-04-18 16:49:11 
+Setting gamma1 to 38.9874209147535 
+ 2018-04-18 16:49:11 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:11 
+Number of known associations retrieved : 0, 0, 0, 0, 0 
+ 2018-04-18 16:49:11 
+Tracked variable Total node degree : 8, 16, 8, 20, 18 
+ 2018-04-18 16:49:11 
+Setting gamma1 to 19.9937104573768 
+ 2018-04-18 16:49:11 
+Number of associations retrieved : 0 
+ 2018-04-18 16:49:12 
+Number of known associations retrieved : 0, 0, 0, 0, 0, 0 
+ 2018-04-18 16:49:12 
+Tracked variable Total node degree : 8, 16, 8, 20, 18, 18 
+ 2018-04-18 16:49:12 
+Optimum gamma1 was found to be 17.8832981843349 
+ 2018-04-18 16:49:12 
+Optimum parameters found: 
+ 2018-04-18 16:49:12 
+
+ Running 10 repetitions of the algorithm  
+ 2018-04-18 16:49:12 
+Results of factorisation printed to file: ./test/cnmtf_my_experiment.RData 
+ 2018-04-18 16:49:12 
+
+ Estimating p-values for the scores   
+ 2018-04-18 16:49:12 
+Number of randomizations in SERIES:  2 
+ 2018-04-18 16:49:12 
+Running randomisations in SERIES 
+ 2018-04-18 16:49:12 
+Randomisation  1 
+ 2018-04-18 16:49:12 
+Randomisation  2 
+ 2018-04-18 16:49:12 
+Results of randomisations printed to file: ./test/randomizations_cnmtf_my_experiment.RData 
+ 2018-04-18 16:49:12 

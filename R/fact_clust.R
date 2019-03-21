@@ -114,16 +114,12 @@
       }
 
       #Assess diagonal degree matrix and Laplacian matrix
-      if(alpha1 != 0){
+      if(gamma1 != 0){
         if (displ == TRUE){ cat("Calculating Laplacian of Wu","\n") }
         Du = diag(rowSums(Wu))
         Lu = Du - Wu
       }
-      if(alpha2 != 0){
-        if (displ == TRUE){ cat("Calculating Laplacian of Wv","\n") }
-        Dv = diag(rowSums(Wv))
-        Lv = Dv - Wv
-      }
+
 
 
       #Initialize objective function
@@ -137,8 +133,8 @@
 
 
       #Run iterations
-      iters.gamma1 = 50
-      if(gamma1 > 0){
+      iters.gamma3 = 50
+      if(gamma3 > 0){
 
         mode.gamma2 = FALSE
         if (displ == TRUE){ cat("Mode gamma2", mode.gamma2,  "\n"  ) }
@@ -171,9 +167,9 @@
         up_u = RV %*% t(S)
         #cat("Update rule for U: down", "\n")
         down_u = UStVV%*%t(S)
-        if ( alpha1 != 0 & ( i %% calcObj) == 0 ){
-          up_u = up_u + alpha1 * Wu %*% U
-          down_u = down_u + alpha1 * Du %*% U
+        if ( gamma1 != 0 & ( i %% calcObj) == 0 ){
+          up_u = up_u + gamma1 * Wu %*% U
+          down_u = down_u + gamma1 * Du %*% U
         }
         U = U*(up_u/down_u)
 
@@ -182,12 +178,9 @@
         up_v = t(R) %*% US
         #cat("Update rule for V: down", "\n")
         down_v = V %*% t(S) %*% t(U) %*% US
-        if ( alpha2 != 0 ){
-          up_v = up_v + alpha2 * Wv %*% V
-          down_v = down_v + alpha2 * Dv %*% V
-        }
-        if ( gamma1 != 0 & mode.gamma2 == FALSE){ #& ( i %% calcObj) == 0
-          down_v = down_v + gamma1 * HLH %*% V
+
+        if ( gamma3 != 0 & mode.gamma2 == FALSE){ #& ( i %% calcObj) == 0
+          down_v = down_v + gamma3 * HLH %*% V
         }
         if ( gamma2 != 0 & mode.gamma2 == TRUE){
           up_v = up_v + gamma2 * Vo
@@ -206,12 +199,11 @@
 
           tmain = norm(R - U %*% S %*% t(V),"F")^2
 
-          if( alpha1 != 0 ){ talpha1 = alpha1 * sum( diag(t(U) %*% Lu %*% U) ) } else { talpha1 = 0 }
-          if( alpha2 != 0 ){ talpha2 = alpha2 * sum( diag(t(V) %*% Lv %*% V) ) } else { talpha2 = 0 }
-          if( gamma1 != 0 & mode.gamma2 == FALSE){ tgamma1 = gamma1 * sum( diag(V %*% t(V) %*% HLH) ) } else { tgamma1 = 0 }
+          if( gamma1 != 0 ){ tgamma1 = gamma1 * sum( diag(t(U) %*% Lu %*% U) ) } else { tgamma1 = 0 }
+          if( gamma3 != 0 & mode.gamma2 == FALSE){ tgamma3 = gamma3 * sum( diag(V %*% t(V) %*% HLH) ) } else { tgamma3 = 0 }
           if( gamma2 != 0 & mode.gamma2 == TRUE){ tgamma2 = gamma2 * norm( V - Vo,"F")^2 } else { tgamma2 = 0 }
 
-          objF.current = tmain + tgamma1 + tgamma2 + talpha1 + talpha2
+          objF.current = tmain + tgamma3 + tgamma2 + tgamma1
 
           #Computing relative change of the objective function
           relErr = (objF.previous - objF.current)/max(1,objF.previous)/calcObj
@@ -223,11 +215,11 @@
           if (displ == TRUE){ print(paste("Iteration: ",i, "; Relative error: ", format(relErr,scientific = TRUE, digits = 3), "; Objective function: ", format(objF.current, scientific = TRUE, digits = 3),sep = "")) }
 
 
-          #If gamma1 or gamma2 are penalizing, track their effect (Use out.cat and pop from global environment variables)
-          if(gamma1 != 0 | gamma2 != 0){
+          #If gamma3 or gamma2 are penalizing, track their effect (Use out and pop from global environment variables)
+          if(gamma3 != 0 | gamma2 != 0){
 
             #Find cluster membership at this iteration
-            #This section makes use of the environmental variables: pop and out.cat
+            #This section makes use of the environmental variables: pop and out
 
             #Extract cluster membership
             clus.Vi = rep(NA, nrow(V))
@@ -236,9 +228,9 @@
             }
 
             #Calculate similarities between partitions of individuals
-            simVO.i = igraph::compare(as.numeric(as.factor(out.cat)), as.numeric(clus.Vi), method  =  c("nmi"))
+            simVO.i = igraph::compare(as.numeric(as.factor(out)), as.numeric(clus.Vi), method  =  c("nmi"))
             simVL.i = igraph::compare(as.numeric(as.factor(pop))[pop!="Unknown"], as.numeric(clus.Vi)[pop!="Unknown"], method  =  c("nmi"))
-            simOL.i = igraph::compare(as.numeric(as.factor(pop))[pop!="Unknown"], as.numeric(as.factor(out.cat)[pop!="Unknown"]), method  =  c("nmi"))
+            simOL.i = igraph::compare(as.numeric(as.factor(pop))[pop!="Unknown"], as.numeric(as.factor(out)[pop!="Unknown"]), method  =  c("nmi"))
 
 
             if (displ == TRUE){
@@ -246,35 +238,12 @@
               #Print similarities
               cat("SimVO", simVO.i, "SimVL", simVL.i, "SimOL", simOL.i, "\n"  )
 
-              #Print number of significant SNVs
-              cat("Number of associations retrieved :", round( length(sig.sc.i), digits = 2), "\n", sep=" ")
-              cat("Number of known associations retrieved :", round( sum(sig.sc.i %in% snps.known), digits = 2), "\n", sep=" ")
             }
-
-            #Find number of known associations retrieved at this iteration
-            #This section makes use of the environmental variables: snps.known
-
-            #Treshold
-            tao.sc.i = 4
-
-            #Calculate score matrix
-            Oi = U %*% S
-            Oi = scale(Oi) #The scaling of columns help to have a more normal alike distribution of delta scores
-
-            #Delta score for a specific combination of patient clusters
-            dOi = Oi[,2] - Oi[,1]
-
-            #Calculate desviations from SD
-            sd.sc.i = (dOi - mean(dOi))/sd(dOi)
-
-            #Find significant SNVs at a given treshold
-            sig.sc.i = rownames( R ) [ abs( sd.sc.i ) >  tao.sc.i ]
-
 
 
             #Check if SimVL increases
 
-            if( simVL.i > 0.02 & 	mode.gamma2 == TRUE & gamma1!= 0){ #2% of similarity would reduce at maximum the number of false positives for PS
+            if( simVL.i > 0.02 & 	mode.gamma2 == TRUE & gamma3!= 0){ #2% of similarity would reduce at maximum the number of false positives for PS
               if (displ == TRUE){ print(paste('SimVL is increasing above 0.01. Current objetive function ', objF.current, sep = "")) }
               break #stop (changed to break to return something, even unfinished optimizations)
             }
@@ -282,7 +251,7 @@
 
             #Check the Mode
 
-            if( (i >= iters.gamma1  | tof >= relErr) & mode.gamma2 == FALSE ){
+            if( (i >= iters.gamma3  | tof >= relErr) & mode.gamma2 == FALSE ){
               mode.gamma2 = TRUE
               if (displ == TRUE){ cat("Mode gamma2", mode.gamma2,  "\n"  ) }
               objF.previous = Inf

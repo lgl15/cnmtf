@@ -14,7 +14,6 @@
 #'
 #[Input]:
 #' @param trait.project Trait
-#' @param data.consortium Data consortium
 #' @param lid.exp List of experiments to analyse
 #' @param work.dat Working directory
 #' @param alpha.cnmtf Significance level for the delta SNV score
@@ -29,7 +28,6 @@
 
 
 		analyze.cnmtf = function(trait.project = NULL,
-														 data.consortium = NULL,
 														 lid.exp = NULL,
 														 work.dat = NULL,
 														 alpha.cnmtf = NULL)	{

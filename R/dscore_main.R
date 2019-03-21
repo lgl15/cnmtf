@@ -14,8 +14,7 @@
 #'
 #[Input]:
 #' @param trait.project Trait
-#' @param data.consortium Data consortium
-#' @param lid.exp List of experiments to analyse
+#' @param name.exp Name of experiment to analyse
 #' @param work.dat Working directory
 #' @param alpha.cnmtf Significance level for the delta SNV score
 #'
@@ -28,11 +27,17 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-		analyze.cnmtf = function(trait.project = NULL,
-														 data.consortium = NULL,
-														 lid.exp = NULL,
-														 work.dat = NULL,
-														 alpha.cnmtf = NULL)	{
+
+		analyze.cnmtf = function(trait.project = NULL, #Trait
+														 name.exp = NULL, #Name of experiment to analyse
+														 work.dat = NULL, #Working directory
+														 alpha.cnmtf = NULL, #Significance level for the delta SNV score
+														 d.conf = NULL, #A dataframe of patients by confounder variables
+														 snps.known = NULL, #Optional. List of known SNVs associated with the disease
+														 snps.known2 = NULL, #Optional. A second list of SNVs to depict on the Manhattan plots
+														 tmap = NULL #Mapping of SNPs to genes, chr and genomic position
+														 )
+			{
 
 
 		#-------------------------------------------------
@@ -42,20 +47,15 @@
 
 					#Load workspace with preprocessing variables
 					  cat("\n", "\n", rep("-",20), "\n", "\n")
-						cat("Analysing results of ", data.consortium, "in trait" , trait.project, "(experiments", lid.exp, ")", "\n", "\n")
-						load(paste(work.dat,"data/r_workspaces/", trait.project, "/preprocess_",trait.project,".RData", sep=""))
+						cat("Analysing results of experiment", name.exp, "in trait", trait.project, "\n", "\n")
 
-					#Set working directory
-						source("n_intro.R")
-
-					#Load list of SNPs and Patients included in the first experiment after filtering R
-						load( file = paste(work.dat,"data/r_workspaces/", trait.project, "/R.snps.s_", trait.project, ".RData", sep=""))
-						R.snps <- R.snps.s
-						load( file = paste(work.dat,"data/r_workspaces/", trait.project, "/R.pats.s_", trait.project, ".RData", sep=""))
-						R.pats <- R.pats.s
+					#Load list of SNPs and Patients included in the experiment after filtering R
+						load( file = paste(work.dat,"cnmtf_", name.exp, ".RData", sep=""))
+						R.snps <- get("clus.U", res.cnmtf[[1]])[,1]
+						R.pats <- get("clus.V", res.cnmtf[[1]])[,1]
 
 					#Filter current vectors and R matrix
-						out.cat = out.cat[ colnames(R) %in% R.pats ]
+						out = out[ colnames(R) %in% R.pats ]
 						pop = pop[ colnames(R) %in% R.pats ]
 						R = R[rownames(R) %in% R.snps, colnames(R) %in% R.pats]
 						dim(R)
@@ -72,8 +72,7 @@
 					load.pvalues.file = TRUE
 
 					#Declare file of LRM p-values
-					source("f_confound.R")
-					lrm.pvalues.file = paste(work.dat,"data/r_workspaces/", trait.project, "/lrm_pvals_", trait.project,".RData",sep="")
+					lrm.pvalues.file = paste(work.dat, "lrm_pvals_", trait.project,".RData",sep="")
 
 					#!!#Some variables to define the correction of pvalues
 					correct.pvals = c("pca", "genomic control")[1]
@@ -83,29 +82,24 @@
 					#Load workspace with LRM p-values or calculate them
 					if( file.exists(lrm.pvalues.file) & load.pvalues.file == TRUE){
 
-						cat("Worksapce with LRM p-values loaded from file.", "\n")
+						cat("Workspace with LRM p-values loaded from file.", "\n")
 
 						load(lrm.pvalues.file)
 
 					}else{
 
+						cat("Workspace with LRM p-values not found. Calculating raw pvalues.", "\n")
 
-						#Define confounder variables to correct for
-						var.conf = unlist( strsplit(as.character(fit$terms[[3]]), " [+] "))[-1]
-						var.conf = var.conf[ var.conf != "1" ]
-						d.conf.s = d.conf[, var.conf]
-
-						#Filter the data frame of confouder variables to match patients in R
-						d.conf.s = d.conf.s[match( colnames(R), unique.pats), ] #Here, unique.pats has the same order and content than patients ids in d.conf, and would work for any consortium
-
-
-						cat("Worksapce with LRM p-values not found. Calculating raw pvalues.", "\n")
+						#Filter confounder variables dataframe to contain same patients than R
+						if( !is.null(d.conf) ){
+							d.conf = d.conf[match( colnames(R), d.conf$patients), ]
+						}
 
 
 						#Calculate semi-corrected p-values (i.e., without correction for PS)
-						pvals.lrm.n  <- regression.snps(out = as.numeric(out.cat)-1,
+						pvals.lrm.n  <- regression.snps(out = as.numeric(out)-1,
 																							R = R,
-																							logistic.model = logistic.model, coding = "additive", d.conf = d.conf.s )
+																							logistic.model = logistic.model, coding = "additive", d.conf = d.conf )
 
 
 
@@ -125,7 +119,7 @@
 
 
 							#Define Number of PCs to retain in PCA
-							n.pcs = 2
+							n.pcs = 3
 
 							#Perform PCA
 							res.pca = dudi.pca(data.frame(t(R)), center = TRUE,  scale = TRUE, scannf = F, nf = n.pcs)
@@ -136,17 +130,22 @@
 							#Calculate corrected p-values adding different number of PCs
 							for(i in 1:n.pcs){
 
-								cat("Calculating corrected p-values with", i , "PCs", "\n")
+										cat("Calculating corrected p-values with", i , "PCs", "\n")
 
 
-								#Add PCs to the dataframe of confouders
-								d.conf.pcs = cbind(d.conf.s, res.pca$li[,1:i])
+										#Add PCs to the dataframe of confouders
+										if( !is.null(d.conf) ){
+											d.conf.pcs = cbind(d.conf, res.pca$li[,1:i])
+										}else{
+											d.conf.pcs = NULL
+										}
 
 
-								#Calculate corrected p-values (i.e., with correction for PS)
-								lpvals.lrm.c [[i]]  <- regression.snps(out = as.numeric(out.cat)-1,
-																								R = R,
-																								logistic.model = logistic.model, coding = "additive", d.conf = d.conf.pcs )
+
+										#Calculate corrected p-values (i.e., with correction for PS)
+										lpvals.lrm.c [[i]]  <- regression.snps(out = as.numeric(out)-1,
+																										R = R,
+																										logistic.model = logistic.model, coding = "additive", d.conf = d.conf.pcs )
 
 							}
 
@@ -160,7 +159,7 @@
 
 
 							#Plot the inflation factor vs number of PCs
-							pdf( file = paste(work.dat,"data/r_workspaces/", trait.project, "/inflation_factor.pdf", sep = ""), width = 7, height = 6)
+							pdf( file = paste(work.dat, "inflation_factor.pdf", sep = ""), width = 7, height = 6)
 							par(mfrow = c(1,1))
 							plot(x = seq(0, length(inflation)), y = c(inflation.0,inflation), t="l", ylab="Genomic control factor lambda", xlab="Number of axes of variation (PCs)", las=1, ylim = c(1, max(c(inflation.0,inflation))))
 							abline(h=1,lty =3)
@@ -172,7 +171,7 @@
 							cor.pcs = matrix(NA, nrow = ncol(res.pca$li), ncol = 2)
 							colnames(cor.pcs) <- c("Corr( PC, outcome)", "Corr( PC, pop)")
 							for(i in 1:ncol(res.pca$li)){
-								cor.pcs[i,1] = kruskal.test( res.pca$li[,i], g = as.factor(out.cat) )$p.value
+								cor.pcs[i,1] = kruskal.test( res.pca$li[,i], g = as.factor(out) )$p.value
 								cor.pcs[i,2] = kruskal.test( res.pca$li[,i], g = as.factor(pop) )$p.value
 							}
 							cor.pcs
@@ -186,7 +185,7 @@
 
 						#Save pvalues from LRM
 
-						save(list = c("pvals.lrm.n","pvals.lrm", "lpvals.lrm.c"),file = paste(work.dat,"data/r_workspaces/", trait.project, "/lrm_pvals_", trait.project, ".RData",sep=""))
+						save(list = c("pvals.lrm.n","pvals.lrm", "lpvals.lrm.c"),file = paste(work.dat,"lrm_pvals_", trait.project, ".RData",sep=""))
 
 					}#End if file with pvalues exists
 
@@ -197,7 +196,7 @@
 					pvals.lrm[ pvals.lrm < 1e-10] <- 1e-10
 
 					#Create QQplots of uncorrected and corrected p-values (without adjustment for Bonferroni)
-					pdf( file = paste(work.dat,"data/r_workspaces/", trait.project, "/qqplot.pdf", sep = ""), width = 7, height = 6)
+					pdf( file = paste(work.dat, "qqplot.pdf", sep = ""), width = 7, height = 6)
 
 					par(mfrow = c(1,2))
 					qq.chisq( qchisq( 1 - pvals.lrm.n, df=1), main = "Uncorrected LRM", pvals = TRUE )
@@ -221,7 +220,6 @@
 
 
 					#Create object for Manhattan plots
-					source("f_results.R")
 					obj.manhattan = manhattan.table(l.snps = R.snps, tmap = tmap)
 					tmanhattan = obj.manhattan[[1]]
 					med.point = obj.manhattan[[2]]
@@ -236,7 +234,7 @@
 
 
 					#Open connection to print to PDF
-					pdf(paste(work.dat,"data/r_workspaces/", trait.project, "/lrm_manhattam.pdf", sep = ""), width = 8, height = 6)
+					pdf(paste(work.dat, "lrm_manhattam.pdf", sep = ""), width = 8, height = 6)
 
 							#Create manhattan plot of uncorrected and corrected p-values
 							par(mfrow = c(1,2))
@@ -261,15 +259,13 @@
 
 
 
-
-
 					#Categorise the set of potential false positives
 					snps.fp.lrm.cat = rep("None", length(R.snps))
 					snps.fp.lrm.cat[ R.snps %in% snps.fp.lrm ] <- "FP"
 					names(snps.fp.lrm.cat) <- R.snps
 
 					#Save list of FP to the workspace of LRM
-					save(list = c("pvals.lrm.n","pvals.lrm", "lpvals.lrm.c", "snps.fp.lrm.cat", "alpha.lrm"), file = paste(work.dat,"data/r_workspaces/", trait.project, "/lrm_pvals_", trait.project, ".RData",sep=""))
+					save(list = c("pvals.lrm.n","pvals.lrm", "lpvals.lrm.c", "snps.fp.lrm.cat", "alpha.lrm"), file = paste(work.dat,"lrm_pvals_", trait.project, ".RData",sep=""))
 
 
 
@@ -280,46 +276,8 @@
 
 				  #Calculate MAF for all SNPs in original R matrix
 					maf.snps = rowSums(R)/((ncol(R)*2))
-					maf.snps.cat = cut(maf.snps, breaks = c(-1,0.01,0.05,0.95,0.99,1), labels = c("rare","low-freq","common","low-freq","rare"))
-					table(maf.snps.cat ); length(maf.snps.cat )
-
-					#Obtain a binary variable from the continuous outcome
-					table(out.cat)
-
-
-					#Declare name of workspace with Gu object
-				  net.type = "ppi"
-					file.Gu = paste(work.dat,"data/r_workspaces/", trait.project, "/Gu_",net.type,"_", trait.project, ".RData",sep="")
-					load(file = file.Gu)
-
-
-			 		#Calculate kd (node degree) for all SNPs in original Wu matrix
-
-					weighted.net = TRUE
-					require("igraph")
-					if( weighted.net == TRUE ){
-
-						degree.distribution(Wu, gamma.kd = 2, weighted = weighted.net)
-						kd.snps = rowSums(Wu)
-
-					}else	{
-
-						degree.distribution(Gu, gamma.kd = 2, weighted = weighted.net)
-						kd.snps = degree(Gu)
-
-					}
-
-
-				 	#Categorize kd
-				 	kd.snps.cat = cut(kd.snps, breaks = c(-1,0,1,2,max(kd.snps)), labels = c("0","1","2",">2"))
-				 	names(kd.snps.cat) <- names(kd.snps)
-
-				 	#Check kd and MAF
-				 	table(kd.snps.cat);
-				  length(kd.snps.cat);
-
-				 	#Create vector of FP from cNMTF
-				 	snps.fp.cnmtf.cat = NULL
+					maf.snps.cat = cut(maf.snps, breaks = c(-1,0.01,0.05,1), labels = c("rare","low-freq","common"))
+					#table(maf.snps.cat ); length(maf.snps.cat )
 
 
 
@@ -328,27 +286,21 @@
 		#------------------------------------------------
 
 
-				 	#Number of experiments
-				 	n.exp = length(lid.exp)
-
 
 				 	#Name and path to files of experiments
-				 	lname.exp = paste(trait.project,"_", lid.exp, sep="")
-				 	lpath.exp = paste(work.dat,"data/r_workspaces/",trait.project,"/", lid.exp,"/", sep="")
-				 	lfile.exp = paste(lpath.exp,"cnmtf_",lname.exp,".RData",sep="")
-				 	lfile.ran = paste(lpath.exp,"randomizations_cnmtf_",lname.exp,".RData",sep="")
+				 	file.exp = paste(work.dat,"cnmtf_",name.exp,".RData",sep="")
+				 	file.ran = paste(work.dat,"randomizations_cnmtf_",name.exp,".RData",sep="")
 
 				 	#PDF file name to print plots
-				 	lprint.file.score =  paste(lpath.exp,"score_results_", lname.exp,".pdf",sep="")
-				 	lprint.file.cluster =  paste(lpath.exp,"cluster_results_", lname.exp,".pdf",sep="")
-				 	lprint.file.delta =  paste(lpath.exp,"delta_results_", lname.exp,".pdf",sep="")
+				 	print.file.score =  paste(work.dat,"score_results_", name.exp,".pdf",sep="")
+				 	print.file.cluster =  paste(work.dat,"cluster_results_", name.exp,".pdf",sep="")
+				 	print.file.delta =  paste(work.dat,"delta_results_", name.exp,".pdf",sep="")
 
 				 	#Workspace name to save lists of SNPs
-				 	lfile.res.sd = paste(lpath.exp,"score_results_", lname.exp,".RData",sep="")
+				 	file.res.sd = paste(work.dat,"score_results_", name.exp,".RData",sep="")
 
 				 	#Create lists to save results of experiments
 				 	res.sd = list() #List to save results of function sd.score
-				 	mode.sig = "sd" #Mode to find significant SNVs
 
 
 					#Make plots of p-values
@@ -357,93 +309,89 @@
 
 
 					#Find significant associations with results of each experiemnt
-						for(i in 1:n.exp){
 
-							cat("\n", "Exploring cluster results of experiment", lid.exp[i], "\n")
+
+							cat("\n", "Exploring cluster results of experiment", name.exp, "\n")
 
 
 							#Define combinations of clusters to compare
-							clus.a = as.list( unlist( mclapply( 1:nlevels(out.cat), function(k) rep(k,nlevels(out.cat)-k)) ) )
-							clus.b = as.list( unlist( mclapply( 2:nlevels(out.cat), function(k) seq(k,nlevels(out.cat))) ) )
+							clus.a = as.list( unlist( mclapply( 1:nlevels(out), function(k) rep(k,nlevels(out)-k)) ) )
+							clus.b = as.list( unlist( mclapply( 2:nlevels(out), function(k) seq(k,nlevels(out))) ) )
 
 
-							#Plot clusters
-							source("f_results.R")
-							plot.clusters (file.exp = lfile.exp [[i]], #Workspace of the experiment (created with function score.cnmtf)
+							#Plot clusterså
+							plot.clusters (file.exp = file.exp , #Workspace of the experiment (created with function score.cnmtf)
 														 snps.known = snps.known2, #List of known associations
-														 print.file = lprint.file.cluster [[i]], #File to print plots
+														 print.file = print.file.cluster , #File to print plots
 														 maf.snps = maf.snps.cat, #Minor allele frequencies of SNPs in the original R matrix without filtering
-														 R.snps = rownames(R) ) #List of SNPs in the original seed files
+														 R.snps = R.snps) #List of SNPs in the original seed files
 
-							dOn = delta.score(file.exp1 = lfile.exp [[i]], #Workspace of the experiments 1 and 2 (created with function score.cnmtf)
+							dOn = delta.score(file.exp1 = file.exp , #Workspace of the experiments 1 and 2 (created with function score.cnmtf)
 																snps.known =  snps.known, #List of known associations
 																snps.known2 = setdiff(snps.known2, snps.known),
-																print.file = lprint.file.delta [[i]] )#File to print plots
+																print.file = print.file.delta  )#File to print plots
 
 
 							#Find significant SNVs
-							cat("\n", "Analysing results of experiment", lid.exp[i], "\n")
+							cat("\n", "Analysing results of experiment", name.exp, "\n")
 
 							#Calculate SD
-							source("f_results.R")
-							res.sd[[ i ]] = sd.score( file.exp =	lfile.exp [[i]], #Workspace of the experiment (created with function score.cnmtf)
-																				path.exp = lpath.exp [[i]], #Path to files of experiment
-																				name.exp = lname.exp [[i]], #Name of experiment (trait and id.exp)
+							res.sd = sd.score( file.exp =	file.exp, #Workspace of the experiment (created with function score.cnmtf)
+																				path.exp = work.dat, #Path to files of experiment
+																				name.exp = name.exp, #Name of experiment (trait and name.exp)
 																				snps.known1 = snps.known,	#List of known associations
 																				snps.known2 = setdiff(snps.known2, snps.known), #Second List of known associations
-																				out.cat = out.cat, #Outcome vector
+																				out = out, #Outcome vector
 																				pop = pop, #Population vector
 																				clus.a = clus.a, clus.b = clus.b, #List of patient clusters to use in the delta scores
 																				use.randomisations = TRUE, #Use randomisations to find the optimal cutoff points for the delta scores
 																				alpha.cnmtf = alpha.cnmtf, #Level of significance for the cutoff points
-																				file.ran = lfile.ran [[i]] ) #Path to file of randomisations
+																				file.ran = file.ran) #Path to file of randomisations
 
 
 							#Call function sd.plot with results of each experiemnt
-							cat("\n", "Plotting results of experiment", lid.exp[i], "\n")
+							cat("\n", "Plotting results of experiment", name.exp, "\n")
 
 
 
-							source("f_results.R")
-							res.sd.plot[[ i ]] = sd.plot(R.snps =  rownames(R), #List of SNPs in the original seed files
-																										 object.sd = res.sd [[i]], #Results from function pvalues.score
-																										 work.dat = work.dat, #Working directory
-																										 pvals.lrm = pvals.lrm, #P-values obtained in a LRM
-																					 					 alpha.lrm = alpha.lrm, #Significance level
-																										 snps.known1 = snps.known2, #List of known associations
-																										 snps.known2 = setdiff(snps.known2, snps.known),
-																										 maf.snps = maf.snps.cat, #Minor allele frequencies of SNPs in the original R matrix without filtering
-																										 kd.snps  = kd.snps.cat, #Node degress of SNPs in the original Wu matrix without filtering
-																						 				 snps.fp.lrm =  if( is.null(snps.fp.cnmtf.cat) ) snps.fp.lrm else snps.fp.cnmtf.cat,#snps.fp.cnmtf.cat, #Potential False Positive association from LRM
-																										 print.file = lprint.file.delta [[i]] , #File to print plots
-																										 tao.sd = NULL, #Treshold of SD. If NULL find the thresholds in object.sd
-																						 				 ylim.sd = c(-10,10), #Limits for axe y
-																						 				 clus.a = clus.a, clus.b = clus.b, #List of patient clusters to use in the delta scores
-																						 				 tmap = tmap, #Mapping of SNPs to genes, chr and genomic position
-																										 trait.project = trait.project) #Trait/outcome
+							res.sd.plot = sd.plot(R.snps =  R.snps, #List of SNPs in the original seed files
+																		 object.sd = res.sd, #Results from function pvalues.score
+																		 work.dat = work.dat, #Working directory
+																		 pvals.lrm = pvals.lrm, #P-values obtained in a LRM
+													 					 alpha.lrm = alpha.lrm, #Significance level
+																		 snps.known1 = snps.known2, #List of known associations
+																		 snps.known2 = setdiff(snps.known2, snps.known),
+																		 maf.snps = maf.snps.cat, #Minor allele frequencies of SNPs in the original R matrix without filtering
+																		 kd.snps  = NULL, #Node degress of SNPs in the original Wu matrix without filtering
+														 				 snps.fp.lrm =  snps.fp.lrm, #Potential False Positive association from LRM
+																		 print.file = print.file.delta , #File to print plots
+																		 tao.sd = NULL, #Treshold of SD. If NULL find the thresholds in object.sd
+														 				 ylim.sd = c(-10,10), #Limits for axe y
+														 				 clus.a = clus.a, clus.b = clus.b, #List of patient clusters to use in the delta scores
+														 				 tmap = tmap, #Mapping of SNPs to genes, chr and genomic position
+																		 trait.project = trait.project) #Trait/outcome
 
 
 
 							#Extract lists of significant variants from LRM and cNMTF
-							sig.snp.lrm = res.sd.plot[[ i ]][[2]]
-							sig.snp.nmtf[[ i ]] <- res.sd.plot[[ i ]][[1]]
+							sig.snp.lrm = res.sd.plot[[2]]
+							sig.snp.nmtf = res.sd.plot[[1]]
 
 							#Print summaries
-							l.pred = names(unlist(sig.snp.nmtf[[i]])) #Number of associations predicted (P)
+							l.pred = names(unlist(sig.snp.nmtf)) #Number of associations predicted (P)
 							n.known = sum(l.pred %in% snps.known2) #Number of known associations retrieved (TP)
 							cat("Number of associations predicted (P):", length(l.pred), "\n")
 							cat("Number of known associations predicted (TP):", n.known, "\n")
 							cat("List of predictions:", l.pred, "\n" )
 
 							#Save results of the experiment in a workspace
-							res.sd.plot.i = res.sd.plot [[ i ]]
-							res.sd.i = res.sd [[ i ]]
-							save(list = c( "res.sd.plot.i", "res.sd.i"), file = lfile.res.sd [[i]] )
+							res.sd.plot.i = res.sd.plot
+							res.sd.i = res.sd
+							save(list = c( "res.sd.plot.i", "res.sd.i"), file = file.res.sd )
 
 
-					}#End loop through experiments
 
 
 				return()
 
- }
+		 }

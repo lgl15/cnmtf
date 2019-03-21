@@ -15,24 +15,23 @@
 # [Input]
 # Parameters for the reference network
 #' @param net.type Type of reference network. Default "ppi"
-#' @param file.dedges Filename with edges from reference network
+#' @param dedges Object with edges from reference network
 #'
 # Parameters for Linkage Disequilibrium
-#' @param expand.highLD Expand SNV consequences to SNVs in high LD
+#' @param remove.highLD Expand SNV consequences to SNVs in high LD
 #' @param ld.tao Treshold of LD. Default 0.8
 #' @param res.ld Table of LD
 #' @param keep.with.LD List of SNPs to include even if they are in LD
 #'
 # Parameters to counstruct Wu
-#' @param R.snps List of SNPs in R
+#' @param R.snps List of SNVs in R
 #' @param work.dat Working directory
 #' @param trait.project Trait
 #' @param n.cores Number of cores for parallel computing
 #' @param tmap Mapping of SNPs to genes
-#' @param alledges.snp Include edges between proteins for all SNPs or only for hubs
 #' @param venn.diag Logical. Print Venn diagrams. Default = FALSE.
 #' @param plot.file File to print Venn diagrams and node degree distribution
-#'
+#' @param snps.known SNVs known to be associated with the trait
 #'
 # [Output]
 #' @return
@@ -48,7 +47,7 @@
 
 	create.network = function(	#Parameters for the reference network
 															net.type = "ppi", #Type of reference network
-															file.dedges = NULL, #Define filename with edges from reference network paste(work.dat,"data/ref_networks/", net.type, "_edges_",trait.project,".txt",sep="")
+															dedges = NULL, #Object with edges from reference network paste(work.dat,"data/ref_networks/", net.type, "_edges_",trait.project,".txt",sep="")
 
 															#Parameters for Linkage Disequilibrium
 															remove.highLD = TRUE,
@@ -62,9 +61,9 @@
 															trait.project = NULL, #Trait
 															n.cores = 4, #Number of cores
 															tmap = NULL, #Mapping of SNPs to genes
-															alledges.snp = FALSE, #Include edges between proteins for all SNPs or only for hubs
 															plot.file = NULL, #File to print Venn diagrams and node degree distribution
-															venn.diag = FALSE) #Print Venn diagrams?
+															venn.diag = FALSE,#Print Venn diagrams?
+															snps.known = NULL ) #SNPs known to be associated with the trait
 
 	{
 
@@ -74,17 +73,6 @@
 
 
 				#Read file with edges
-				if( !file.exists(file.dedges) ){
-
-						stop("The reference PPIN was not found.")
-
-				}else{
-
-					cat("Loading reference network: list of interactions between gene entrezids", "\n")
-					dedges = read.table(paste(work.dat,"data/ref_networks/", net.type, "_edges_",trait.project,".txt",sep=""), head = TRUE)
-
-				}
-
 				cat("Dimmensions of table of edges (dedges):", "\n"); print(dim(dedges))
 
 
@@ -124,11 +112,11 @@
 		#-------------------------------------------------
 
 
-				if( remove.highLD == TRUE ){
+				if( remove.highLD == TRUE & length(res.ld) > 1){
 
 						#Expand consequences to other SNPs in high LD
-						snp.poly.exp = unique( c(snp.poly, as.character(res.ld$loc1) [ res.ld$loc2 %in% snp.poly & res.ld$r2 > ld.tao ], as.character(res.ld$loc2) [ res.ld$loc1 %in% snp.poly & res.ld$r2 > ld.tao ] ) )
-						snp.sift.exp = unique( c(snp.sift, as.character(res.ld$loc1) [ res.ld$loc2 %in% snp.sift & res.ld$r2 > ld.tao ], as.character(res.ld$loc2) [ res.ld$loc1 %in% snp.sift & res.ld$r2 > ld.tao ] ) )
+						snp.poly = unique( c(snp.poly, as.character(res.ld$loc1) [ res.ld$loc2 %in% snp.poly & res.ld$r2 > ld.tao ], as.character(res.ld$loc2) [ res.ld$loc1 %in% snp.poly & res.ld$r2 > ld.tao ] ) )
+						snp.sift = unique( c(snp.sift, as.character(res.ld$loc1) [ res.ld$loc2 %in% snp.sift & res.ld$r2 > ld.tao ], as.character(res.ld$loc2) [ res.ld$loc1 %in% snp.sift & res.ld$r2 > ld.tao ] ) )
 
 						#Define vector of high LD SNPs to remove
 						set.out = unique(as.character(res.ld$loc2[ res.ld$r2 > ld.tao] ))
@@ -137,10 +125,14 @@
 						set.out = setdiff( set.out, keep.with.LD )
 
 						#Filter vectors
-						snp.poly.exp = snp.poly.exp [ !(snp.poly.exp %in% set.out) ]
-						snp.sift.exp = snp.sift.exp [ !(snp.sift.exp %in% set.out) ]
+						snp.poly = snp.poly [ !(snp.poly %in% set.out) ]
+						snp.sift = snp.sift [ !(snp.sift %in% set.out) ]
 						snp.impact = snp.impact [ !(snp.impact %in% set.out) ]
-						snps.known2 = snps.known2 [ !(snps.known2  %in% set.out) ]
+						snps.known = snps.known [ !(snps.known  %in% set.out) ]
+
+				}else{
+
+					set.out = NULL
 
 				}
 
@@ -151,20 +143,20 @@
 		#-------------------------------------------------
 
 				#Merge lists into one
-				ldamaging = unique(c(snp.poly.exp, snp.sift.exp, snp.impact))
+				ldamaging = unique(c(snp.poly, snp.sift, snp.impact))
 
 				#Check number of damaging variants and known associations
 				length(ldamaging)
-				cat( length(snps.known2), "SNVs known to be associated with the trait. source: GWAS catalogue.", "\n")
+				cat( length(snps.known), "SNVs known to be associated with the trait. source: GWAS catalogue.", "\n")
 				cat( length(snp.impact), "SNVs with high or moderate impact (e.g, frameshift variant, stop gained) source: Ensembl.", "\n")
-				cat( length(union(snp.poly.exp,snp.sift.exp)), "deleterious SNVs. source:  Sift and Polyphen.", "\n")
-				cat( "Total:", length(union(ldamaging,snps.known2)), "damaging SNVs", "\n" )
+				cat( length(union(snp.poly,snp.sift)), "deleterious SNVs. source:  Sift and Polyphen.", "\n")
+				cat( "Total:", length(union(ldamaging,snps.known)), "damaging SNVs", "\n" )
 
 
 				if( venn.diag == TRUE){
 
 						#Create venn diagrams for each source
-						venn.list = list(Sift.Poly = union( snp.poly.exp, snp.sift.exp), ENSEMBL = snp.impact, GWAS = snps.known2)
+						venn.list = list(Sift.Poly = union( snp.poly, snp.sift), ENSEMBL = snp.impact, GWAS = snps.known)
 						fill.venn = c('blue', 'orange', 'green', 'yellow', 'brown')[1:(length(venn.list))]
 
 
@@ -194,10 +186,9 @@
 
 
 				#Hubs in the network
-				lhubs = union( ldamaging, snps.known2 )
+				lhubs = union( ldamaging, snps.known )
 
 				#Run function to construct and print the network
-				source("f_net.R")
 				res.Wu = construct.Wu(R.snps = R.snps[ !(R.snps  %in% set.out) ], work.dat = work.dat,
 															tmap = tmap, net.type = net.type,  dedges = dedges,  #Network as a list of edges
 															trait.project = trait.project, n.cores = n.cores,
@@ -205,19 +196,18 @@
 
 
 				#Check density and node degree distribution
-				source("f_net.R")
 				degree.distribution( res.Wu[[1]], gamma.kd = 2, weighted = TRUE)
 				dev.off()
 
 				#Number of damaging and known SNPs connected in the network
 				cat("Number of damaging SNPs connected in the network", sum( R.snps[ rowSums( res.Wu[[1]] )>0] %in% ldamaging), "\n", as.character(Sys.time()), "\n")
-				cat("Number of known SNPs connected in the network", sum( R.snps[ rowSums( res.Wu[[1]] )>0] %in% snps.known2), "\n", as.character(Sys.time()), "\n")
+				cat("Number of known SNPs connected in the network", sum( R.snps[ rowSums( res.Wu[[1]] )>0] %in% snps.known), "\n", as.character(Sys.time()), "\n")
 
 
 				#Create with node properties for Cytoscape
 				snp.cat = rep("Candidate",length(R.snps))
 				snp.cat[ R.snps %in% ldamaging ] <- "Damaging"
-				snp.cat[ R.snps %in% snps.known2 ] <- "Known"
+				snp.cat[ R.snps %in% snps.known ] <- "Known"
 
 				#Add Gene
 				snp.gene = as.character(tmap$entrezgene[ match(R.snps, tmap$refsnp_id)])
@@ -225,7 +215,7 @@
 
 				#Write table
 				cat("Writing table with node properties for Cytoscape", "\n");
-				write.table( cbind(R.snps, snp.cat, snp.gene), file = paste(work.dat,"data/r_workspaces/", trait.project, "/Gu_",net.type, "_", trait.project, "_attributes.txt",sep=""), row.names = FALSE, quote = FALSE)
+				write.table( cbind(R.snps, snp.cat, snp.gene), file = paste(work.dat, "Gu_",net.type, "_", trait.project, "_attributes.txt",sep=""), row.names = FALSE, quote = FALSE)
 
 
 
@@ -253,42 +243,43 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-		rownet = function(i = NULL, dedges = NULL,lgene = NULL, R.snps = NULL, tmap = NULL){
+	rownet.hub = function(i = NULL, dedges = NULL,lgene = NULL, R.snps = NULL, tmap = NULL, lhubs = NULL){
 
-		  print(cat("Finding SNP-SNP interactions for gene", i, "\n"))
+		print(cat("Finding SNP-SNP interactions for gene", i, "\n"))
 
-		  #Declare lists of SNPs of gene i and SNPs of gene i's interactors
-		  pos.a = NULL; pos.b = NULL
+		#Declare lists of SNPs of gene i and SNPs of gene i's interactors
+		pos.a.hub = pos.b.hub = NULL; pos.a.snp = pos.b.snp = NULL
 
-			#Interactors of protein i (Rows of protein i in the table dedges)
-			a = c( which( dedges[,1] %in% lgene[i]), which( dedges[,2] %in% lgene[i] ))
+		#Interactors of protein i (Rows of protein i in the table dedges)
+		a = c( which( dedges[,1] %in% lgene[i]), which( dedges[,2] %in% lgene[i] ))
 
-			#Find the SNPs of gene i and map them to the list of snps total (i.e. rownames of R)
-			pos.a = which( R.snps %in% tmap$refsnp_id[ tmap$entrezgene %in% lgene[i] ])
+		#Find the SNPs of gene i and map them to the list of snps total (i.e. rownames of R)
+		pos.a.hub = which( R.snps %in% tmap$refsnp_id[ tmap$entrezgene %in% lgene[i] & tmap$refsnp_id %in% lhubs ])
+		pos.a.snp = which( R.snps %in% tmap$refsnp_id[ tmap$entrezgene %in% lgene[i]])
 
+		for(j in i:length(lgene)){ #Including SNP-SNP interactions within the same gene
 
-			for(j in i:length(lgene)){ #Including SNP-SNP interactions within the same gene
+			##Interactors of protein j (Rows of protein j)
+			b = c( which( dedges[,1] %in% lgene[j] ), which( dedges[,2] %in% lgene[j] ) )
 
-				##Interactors of protein j (Rows of protein j)
-				b = c( which( dedges[,1] %in% lgene[j] ), which( dedges[,2] %in% lgene[j] ) )
+			if( sum(a%in%b)>0 ){ # If they share any interaction
 
-				if( sum(a%in%b)>0 ){ # If they share any interaction
+				##Find the SNPs of gene j and map them to the list of snps total (i.e. rownames of R)
+				pos.b.hub = c(pos.b.hub, which( R.snps %in% tmap$refsnp_id[ tmap$entrezgene %in% lgene[j] & tmap$refsnp_id %in% lhubs  ]))
 
-					##Find the SNPs of gene j and map them to the list of snps total (i.e. rownames of R)
-					pos.b = c(pos.b, which( R.snps %in% tmap$refsnp_id[ tmap$entrezgene %in% lgene[j] ]))
-
+				if(i == j){
+					pos.b.snp = which( R.snps %in% tmap$refsnp_id[ tmap$entrezgene %in% lgene[j] ])
 				}
-			}
 
-			if(length(pos.b) > 0){
-			  return(list(pos.a,pos.b))
-			}else{
-			  return()
-			}
 
+			}
 
 		}
 
+		return(list(pos.a.snp, pos.b.snp, pos.a.hub, pos.b.hub))
+
+
+	}
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -349,55 +340,6 @@
 
 			#Find edges
 
-			if( alledges.snp == TRUE ){
-
-
-						#Find the edges for each pair of genes
-						cat("Creating SNP-SNP network", "\n")
-
-						rows.Wu <- foreach(i = 1:(length(lgene.s))) %dopar% {
-							rows.Wu = rownet(i = i, dedges = dedges, lgene = lgene.s, R.snps = R.snps, tmap = tmap)}
-
-						cat("Filling the adjacency matrix", "\n", as.character(Sys.time()), "\n")
-
-
-						#Crete edges between snps in the same protein and hubs
-
-						for(i in 1:length(rows.Wu)){
-
-							#Edges between snps in the same protein or between proteins
-							if( length( rows.Wu[[i]][[1]] ) > 0 & length( rows.Wu[[i]][[2]] ) > 0 ){
-
-								Wu[ rows.Wu[[i]][[2]] , rows.Wu[[i]][[1]]  ] <- 1.5
-								Wu[ rows.Wu[[i]][[1]] , rows.Wu[[i]][[2]]  ] <- 1.5
-
-								#Find edges between hubs
-								hubs.1 = intersect( rows.Wu[[i]][[1]] , which(R.snps %in% lhubs))
-								hubs.2 = intersect( rows.Wu[[i]][[2]] , which(R.snps %in% lhubs))
-
-								#Find edges between non-hubs
-								reg.1 = intersect( rows.Wu[[i]][[1]] , which(!(R.snps %in% lhubs)))
-								reg.2 = intersect( rows.Wu[[i]][[2]] , which(!(R.snps %in% lhubs)))
-
-								if( length( hubs.1 ) > 0 & length( hubs.2 ) > 0 ){
-									Wu[ hubs.1, hubs.2 ] <- 2
-									Wu[ hubs.2, hubs.1 ] <- 2
-								}
-								if( length( reg.1 ) > 0 & length( reg.2 ) > 0 ){
-									Wu[ reg.1, reg.2 ] <- 1
-									Wu[ reg.2, reg.1 ] <- 1
-								}
-
-							}
-
-						} #End loop across pairs of genes
-
-
-
-
-			}else{
-
-
 						#Find the edges at each row
 						cat("Creating SNP-SNP network with hubs", "\n")
 
@@ -436,9 +378,6 @@
 
 
 
-			}
-
-
 
 			#Transform the matrix to an adjacency matrix
 				cat("Changing adjacency matrix class", "\n", as.character(Sys.time()), "\n")
@@ -453,11 +392,11 @@
 				Gu = graph.adjacency(Wu, mode="undirected", weighted = TRUE)
 
 			#Write table with edges and weights
-				cat("Printing list of edges to", paste(work.dat,"data/r_workspaces/", trait.project, "/Gu_",net.type, "_", trait.project, ".txt",sep=""), "\n", as.character(Sys.time()), "\n")
-				write.graph(Gu,file = paste(work.dat,"data/r_workspaces/", trait.project, "/Gu_", net.type, "_", trait.project, ".txt",sep=""), format = "ncol")
+				cat("Printing list of edges to", paste(work.dat, "/Gu_",net.type, "_", trait.project, ".txt",sep=""), "\n", as.character(Sys.time()), "\n")
+				write.graph(Gu,file = paste(work.dat, "/Gu_", net.type, "_", trait.project, ".txt",sep=""), format = "ncol")
 
 			#Save graph object
-				save(list = c("Wu","Gu"),file = paste(work.dat,"data/r_workspaces/", trait.project, "/Gu_", net.type, "_", trait.project,".RData",sep=""))
+				save(list = c("Wu","Gu"),file = paste(work.dat, "/Gu_", net.type, "_", trait.project,".RData",sep=""))
 
 			return(list(Wu,Gu))
 
