@@ -4,15 +4,14 @@
 \alias{analyze.cnmtf}
 \title{Analyze cNMTF results}
 \usage{
-analyze.cnmtf(trait.project = NULL, data.consortium = NULL,
-  lid.exp = NULL, work.dat = NULL, alpha.cnmtf = NULL)
+analyze.cnmtf(trait.project = NULL, name.exp = NULL, work.dat = NULL,
+  alpha.cnmtf = NULL, d.conf = NULL, snps.known = NULL,
+  snps.known2 = NULL, tmap = NULL)
 }
 \arguments{
 \item{trait.project}{Trait}
 
-\item{data.consortium}{Data consortium}
-
-\item{lid.exp}{List of experiments to analyse}
+\item{name.exp}{Name of experiment to analyse}
 
 \item{work.dat}{Working directory}
 

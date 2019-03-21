@@ -4,7 +4,7 @@
 \alias{parameters.cnmtf}
 \title{Optimal penalization paramaters}
 \usage{
-parameters.cnmtf(R, out.cat = NULL, pop = NULL, k, log.file = NULL,
+parameters.cnmtf(R, out = NULL, pop = NULL, k, log.file = NULL,
   Wv = NULL, Wu = NULL, HLH = NULL, Vo = NULL, Gu = NULL, Gv = NULL,
   V.init = NULL, U.init = NULL, name.exp = NULL, name.init = NULL,
   work.dat = NULL, sequential.estimation = FALSE, wparameters = NULL,
@@ -16,7 +16,7 @@ parameters.cnmtf(R, out.cat = NULL, pop = NULL, k, log.file = NULL,
 \arguments{
 \item{R}{Relationship matrix}
 
-\item{out.cat}{Categorical outcome variable}
+\item{out}{Categorical outcome variable}
 
 \item{pop}{Population variable}
 
@@ -67,7 +67,7 @@ parameters.cnmtf(R, out.cat = NULL, pop = NULL, k, log.file = NULL,
 \item{snps.known}{List of known associations}
 }
 \value{
-\code{opt.parameters} list of optimal parameters fitted: \code{gamma1, gamma2, gamma3}
+\code{opt.parameters} list of optimal parameters fitted: \code{gamma3, gamma2, gamma3}
 }
 \description{
 Function to estimate the optimal parameters for the cNMTF algorithm.

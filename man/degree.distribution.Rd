@@ -25,7 +25,7 @@ Other Preprocessing functions: \code{\link{coding.scheme}},
   \code{\link{create.network}},
   \code{\link{kernels.cnmtf}},
   \code{\link{mapply.snpt.synthetic.gwas}},
-  \code{\link{rownet}}, \code{\link{seed.snps}},
+  \code{\link{rownet.hub}},
   \code{\link{snpt.synthetic.gwas}}
 }
 \author{

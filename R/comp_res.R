@@ -35,7 +35,8 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-  annotate.results = function( name.exp = NULL, #Define experiment id
+  annotate.results = function( trait.project = "test", #Trait under analysis
+  														 name.exp = NULL, #Define experiment id
   														 snps.known = NULL, #Optional. List of SNVs known to be associated with the disease
   														 snps.known2 = NULL, #Optional. A second list of SNVs.
   														 add.david.annotations = TRUE, #Use DAVID web service or export/import manually

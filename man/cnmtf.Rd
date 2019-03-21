@@ -4,14 +4,18 @@
 \alias{cnmtf}
 \title{cNMTF algorithm}
 \usage{
-cnmtf(R, HLH, Vo, Wu, Wv, k, iters = 1, calcObj, calcObj2, displ = TRUE,
+cnmtf(R, HLH, Vo, Wu, k, iters = 1, calcObj, calcObj2, displ = TRUE,
   tof = 1e-05, lparameters, init = 1, V.init = NULL, U.init = NULL,
-  init.S = FALSE)
+  init.S = FALSE, DWD = NULL)
 }
 \arguments{
 \item{R}{Data matrix, \emph{n x m}}
 
-\item{Vo}{Outcome label matrix, \emph{m x k2}}
+\item{HLH}{Term in the correction for population structures. Dot product: H . L . H where: H is the Centering matrix \emph{(m x m)} and L is Ancestry matrix (i.e. Kernel on the confounder random variable) \emph{(m x m)}}
+
+\item{Vo}{Phenotype/Outcome label matrix, \emph{m x k2}}
+
+\item{Wu}{Adjacency matrix of the SNV-SNV network. \emph{n x n}}
 
 \item{k}{Vector of rank parameters, \emph{k1 x k2}}
 
@@ -23,13 +27,11 @@ cnmtf(R, HLH, Vo, Wu, Wv, k, iters = 1, calcObj, calcObj2, displ = TRUE,
 
 \item{tof}{RelativeError}
 
-\item{lparameters}{Vector of regularization parameters}
+\item{lparameters}{Vector of regularization parameters:  \eqn{ \gamma_{1}, \gamma_{2}, \gamma_{3} } for the SNV-SNV network, the Phenotype matrix and the Ancestry Kernel respectively.}
 
 \item{init}{Initialize the matrices randomly (0) or by using PSVD (1)}
 
-\item{H}{Centering matrix, \emph{m x m}}
-
-\item{L}{Side information kernel matrix (i.e. Kernel on the confounder random variable) \link{mxm}}
+\item{DWD}{Term in the normalised graph laplacian. Dot product:  1/sqrt(Du) . Wu . 1/sqrt(Du), where: Du is the Degree matrix and Wu is the adjacency matrix of the SNV-SNV network.}
 }
 \value{
 \itemize{

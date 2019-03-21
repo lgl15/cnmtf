@@ -319,7 +319,7 @@
 					k = 1 # Counter variable for the rows of the table
 
 					#Read chromosome and position
-					pos.match = match(l.snps, tmap$refsnp_id)
+					pos.match = match(as.character(l.snps), as.character(tmap$refsnp_id) )
 					tmanhattan = data.frame(chr = as.numeric( as.character( tmap$chr[ pos.match ]) ),
 																	position = as.numeric( as.character( tmap$position[ pos.match ]) ),
 																	snp = l.snps, stringsAsFactors = FALSE)

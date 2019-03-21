@@ -25,6 +25,7 @@
 			library("igraph") #Network construction
 			library("ade4") #Principal components analysis
 			library("VennDiagram") #Venn diagrams
+			library("snpStats") #
 
 
 			#Installation of cnmtf package from github repository
@@ -84,21 +85,21 @@
 									 work.dat = "./test/", #Folder to save and load workspaces
 
 									 #Number of clusters
-									 define.k = "method", #Method to define k1
-									 k1 = c(2,3,5,8,10,15,20), #Number of clusters of SNVs
+									 define.k = "user", #Method to define k1
+									 k1 = 20, #Number of clusters of SNVs
 									 k2 = nlevels(out), #Number of clusters of patients
 
 									 #Penalisation parameters
 									 wparameters = list(gamma1 = 0.5, #Weight for the SNV network, Lu
-									 									 gamma2 = 0.999, #Weight for the outcome matrix, Vo
-									 									 gamma3 = 0.999), #Weight for the kernel matrix, A
+									 									 gamma2 = 1, #Weight for the outcome matrix, Vo
+									 									 gamma3 = 1), #Weight for the kernel matrix, A
 									 save.parameters = TRUE, #Save parameters to file
 									 run.t.par = 4, #Number of repetitions for parameters fitting
 									 max.try0 = 4,  #Maximum number of tries to fit the parameter
 									 snps.known = NULL, #List of known SNV associated with the trait
 
 									 #Variables to control performance of the algorithm
-									 parallel.opt = F, #Run some instances of the algorithm in parallel
+									 parallel.opt = T, #Run some instances of the algorithm in parallel
 									 n.cores = 3, #Number of cores to use in the parallel processing
 									 init = 0, #Type of seeding/initialisation of matrices in the algorithm
 									 do.U = TRUE, #Perform clustering of SNPs
@@ -110,7 +111,7 @@
 
 									 #Randomisations
 									 score.pvalues = T, #Estimate p-values for the scores
-									 random.parallel = F, #Run each randomisation in parallel
+									 random.parallel = T, #Run each randomisation in parallel
 									 randomisations = 100, #Number of randomisations
 
 									 #Construction of penalisation terms
@@ -133,7 +134,8 @@
 										 alpha.cnmtf = 0.005, #Significance level for the delta SNV score
 										 d.conf = NULL, #Optional. A dataframe of patients by confounder variables
 										 snps.known = NULL, #Optional. List of known SNVs associated with the disease
-										 snps.known2 = NULL #Optional. A second list of SNVs to depict on the Manhattan plots
+										 snps.known2 = NULL, #Optional. A second list of SNVs to depict on the Manhattan plots
+										 tmap = tmap
 			)
 
 

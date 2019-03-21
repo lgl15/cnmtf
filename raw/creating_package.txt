@@ -34,7 +34,7 @@ git push -u origin master
 
 Creating a webpage
 
-1. Tuturial
+1. Tutorial
 https://jules32.github.io/rmarkdown-website-tutorial/first_observations.html
 
 install.packages('rmarkdown')

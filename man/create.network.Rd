@@ -4,15 +4,17 @@
 \alias{create.network}
 \title{Constructs the SNV-SNV network}
 \usage{
-create.network(net.type = "ppi", file.dedges = NULL, remove.highLD = TRUE,
+create.network(net.type = "ppi", dedges = NULL, remove.highLD = TRUE,
   ld.tao = 0.8, res.ld = NULL, keep.with.LD = NULL, R.snps = NULL,
   work.dat = NULL, trait.project = NULL, n.cores = 4, tmap = NULL,
-  alledges.snp = FALSE, plot.file = NULL, venn.diag = FALSE)
+  plot.file = NULL, venn.diag = FALSE, snps.known = NULL)
 }
 \arguments{
 \item{net.type}{Type of reference network. Default "ppi"}
 
-\item{file.dedges}{Filename with edges from reference network}
+\item{dedges}{Object with edges from reference network}
+
+\item{remove.highLD}{Expand SNV consequences to SNVs in high LD}
 
 \item{ld.tao}{Treshold of LD. Default 0.8}
 
@@ -20,7 +22,7 @@ create.network(net.type = "ppi", file.dedges = NULL, remove.highLD = TRUE,
 
 \item{keep.with.LD}{List of SNPs to include even if they are in LD}
 
-\item{R.snps}{List of SNPs in R}
+\item{R.snps}{List of SNVs in R}
 
 \item{work.dat}{Working directory}
 
@@ -30,13 +32,11 @@ create.network(net.type = "ppi", file.dedges = NULL, remove.highLD = TRUE,
 
 \item{tmap}{Mapping of SNPs to genes}
 
-\item{alledges.snp}{Include edges between proteins for all SNPs or only for hubs}
-
 \item{plot.file}{File to print Venn diagrams and node degree distribution}
 
 \item{venn.diag}{Logical. Print Venn diagrams. Default = FALSE.}
 
-\item{expand.highLD}{Expand SNV consequences to SNVs in high LD}
+\item{snps.known}{SNVs known to be associated with the trait}
 }
 \value{
 \itemize{
@@ -54,7 +54,7 @@ Other Preprocessing functions: \code{\link{coding.scheme}},
   \code{\link{degree.distribution}},
   \code{\link{kernels.cnmtf}},
   \code{\link{mapply.snpt.synthetic.gwas}},
-  \code{\link{rownet}}, \code{\link{seed.snps}},
+  \code{\link{rownet.hub}},
   \code{\link{snpt.synthetic.gwas}}
 }
 \author{

@@ -1,0 +1,479 @@
+
+ 
+ Running experiment my_experiment 
+ 2019-03-21 17:59:12 
+Dimensions of input R: 100 50 
+ 2019-03-21 17:59:12 
+
+ Setting numbers of clusters by  user 
+ 2019-03-21 17:59:12 
+Number of clusters set to: 20 2 
+ 2019-03-21 17:59:12 
+
+ Setting penalisation parameters  
+ 2019-03-21 17:59:12 
+Workspace with SNP-SNP network was found. 
+ 2019-03-21 17:59:12 
+Dimensions of input Wu: 100 100 
+ 2019-03-21 17:59:12 
+Calculating the Side information kernel matrix (L) and the centering matrix (H) 
+ 2019-03-21 17:59:12 
+Calculating the prior-knowledge matrix for patients (Vo) 
+ 2019-03-21 17:59:12 
+Dimensions of input Vo: 50 2 
+ 2019-03-21 17:59:12 
+Random initialisation of matrices U and V 
+ 2019-03-21 17:59:12 
+
+ 
+ Fitting range of parameters. 
+ 2019-03-21 17:59:12 
+Range of parameters fitted to: c(0, 0) 
+ 2019-03-21 17:59:12 
+ Range of parameters fitted to: c(0, 0) 
+ 2019-03-21 17:59:12 
+ Range of parameters fitted to: c(0, 2.81107590052423) 
+ 2019-03-21 17:59:12 
+ Range of parameters fitted to: c(0, 2.29336505312287) 
+ 2019-03-21 17:59:12 
+
+ Setting gamma2 
+ 2019-03-21 17:59:12 
+Optimum gamma2 was found to be 2.29336505312287 
+ 2019-03-21 17:59:12 
+
+ Setting gamma3 
+ 2019-03-21 17:59:12 
+Max Similarity Cluster-Population : 1 
+ 2019-03-21 17:59:12 
+List of parameters gamma3 to evaluate:  0, 1, 0.1, 0.01 
+ 2019-03-21 17:59:12 
+Setting gamma3 to 0 
+ 2019-03-21 17:59:12 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:13 
+Number of known associations retrieved : 0, NA, NA, NA 
+ 2019-03-21 17:59:13 
+Tracked variable Similarity Cluster-Population : 0.67, NA, NA, NA 
+ 2019-03-21 17:59:13 
+Setting gamma3 to 1 
+ 2019-03-21 17:59:13 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:13 
+Number of known associations retrieved : 0, 0, NA, NA 
+ 2019-03-21 17:59:13 
+Updated list of parameter gamma3 to evaluate: 0, 1, 0.25, 0.5, 0.75 
+ 2019-03-21 17:59:13 
+Sub-range to fit gamma3 : 0 
+ 2019-03-21 17:59:13 
+ Sub-range to fit gamma3 : 1 
+ 2019-03-21 17:59:13 
+Tracked variable Similarity Cluster-Population : 0.67, 0.63, NA, NA 
+ 2019-03-21 17:59:13 
+Setting gamma3 to 0.25 
+ 2019-03-21 17:59:13 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:14 
+Number of known associations retrieved : 0, 0, 0, NA 
+ 2019-03-21 17:59:14 
+Tracked variable Similarity Cluster-Population : 0.67, 0.63, 0.63, NA 
+ 2019-03-21 17:59:14 
+Setting gamma3 to 0.5 
+ 2019-03-21 17:59:14 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:15 
+Number of known associations retrieved : 0, 0, 0, 0 
+ 2019-03-21 17:59:15 
+Tracked variable Similarity Cluster-Population : 0.67, 0.63, 0.63, 0.63 
+ 2019-03-21 17:59:15 
+Setting gamma3 to 0.75 
+ 2019-03-21 17:59:15 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:15 
+Number of known associations retrieved : 0, 0, 0, 0, 0 
+ 2019-03-21 17:59:15 
+Tracked variable Similarity Cluster-Population : 0.67, 0.63, 0.63, 0.63, 0.61 
+ 2019-03-21 17:59:15 
+Optimum gamma3 was found to be -8.17010843994967 
+ 2019-03-21 17:59:15 
+Optimum gamma3 can not be negative. Using minimum value tested in the optimisation (different than zero) : 0.25 
+ 2019-03-21 17:59:15 
+
+ Setting gamma1 
+ 2019-03-21 17:59:15 
+Max Total node degree : 20 
+ 2019-03-21 17:59:15 
+List of parameters gamma1 to evaluate:  0, 2.81107590052423, 0.1, 0.01 
+ 2019-03-21 17:59:15 
+Setting gamma1 to 0 
+ 2019-03-21 17:59:15 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:15 
+Number of known associations retrieved : 0, NA, NA, NA 
+ 2019-03-21 17:59:15 
+Tracked variable Total node degree : 6, NA, NA, NA 
+ 2019-03-21 17:59:15 
+Setting gamma1 to 2.81107590052423 
+ 2019-03-21 17:59:15 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:16 
+Number of known associations retrieved : 0, 0, NA, NA 
+ 2019-03-21 17:59:16 
+Tracked variable Total node degree : 6, 20, NA, NA 
+ 2019-03-21 17:59:16 
+Setting gamma1 to 0.1 
+ 2019-03-21 17:59:16 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:17 
+Number of known associations retrieved : 0, 0, 0, NA 
+ 2019-03-21 17:59:17 
+Updated list of parameter gamma1 to evaluate: 0, 2.81, 0.1, 2.13, 1.46, 0.78 
+ 2019-03-21 17:59:17 
+Sub-range to fit gamma1 : 2.81107590052423 
+ 2019-03-21 17:59:17 
+ Sub-range to fit gamma1 : 0.1 
+ 2019-03-21 17:59:17 
+Tracked variable Total node degree : 6, 20, 6, NA 
+ 2019-03-21 17:59:17 
+Setting gamma1 to 2.13330692539317 
+ 2019-03-21 17:59:17 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:17 
+Number of known associations retrieved : 0, 0, 0, 0 
+ 2019-03-21 17:59:17 
+Tracked variable Total node degree : 6, 20, 6, 10 
+ 2019-03-21 17:59:17 
+Setting gamma1 to 1.45553795026212 
+ 2019-03-21 17:59:17 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:18 
+Number of known associations retrieved : 0, 0, 0, 0, 0 
+ 2019-03-21 17:59:18 
+Tracked variable Total node degree : 6, 20, 6, 10, 20 
+ 2019-03-21 17:59:18 
+Setting gamma1 to 0.777768975131058 
+ 2019-03-21 17:59:18 
+Number of associations retrieved : 0 
+ 2019-03-21 17:59:18 
+Number of known associations retrieved : 0, 0, 0, 0, 0, 0 
+ 2019-03-21 17:59:18 
+Tracked variable Total node degree : 6, 20, 6, 10, 20, 4 
+ 2019-03-21 17:59:18 
+Optimum gamma1 was found to be 1.65488176647713 
+ 2019-03-21 17:59:18 
+Optimum parameters found: 
+ 2019-03-21 17:59:18 
+
+ Running 10 repetitions of the algorithm  
+ 2019-03-21 17:59:18 
+Results of factorisation printed to file: ./test/cnmtf_my_experiment.RData 
+ 2019-03-21 17:59:20 
+
+ Estimating p-values for the scores   
+ 2019-03-21 17:59:20 
+Number of randomizations in PARALLEL:  100 
+ 2019-03-21 17:59:20 
+Running randomizations in PARALLEL 
+ 2019-03-21 17:59:20 
+
+ Randomisation  2 
+ 2019-03-21 17:59:20 
+
+ Randomisation  1 
+ 2019-03-21 17:59:20 
+
+ Randomisation  3 
+ 2019-03-21 17:59:20 
+
+ Randomisation  5 
+ 2019-03-21 17:59:20 
+
+ Randomisation  4 
+ 2019-03-21 17:59:20 
+
+ Randomisation  6 
+ 2019-03-21 17:59:20 
+
+ Randomisation  8 
+ 2019-03-21 17:59:21 
+
+ Randomisation  9 
+ 2019-03-21 17:59:21 
+
+ Randomisation  7 
+ 2019-03-21 17:59:21 
+
+ Randomisation  11 
+ 2019-03-21 17:59:21 
+
+ Randomisation  12 
+ 2019-03-21 17:59:21 
+
+ Randomisation  10 
+ 2019-03-21 17:59:21 
+
+ Randomisation  15 
+ 2019-03-21 17:59:21 
+
+ Randomisation  14 
+ 2019-03-21 17:59:21 
+
+ Randomisation  13 
+ 2019-03-21 17:59:21 
+
+ Randomisation  17 
+ 2019-03-21 17:59:21 
+
+ Randomisation  16 
+ 2019-03-21 17:59:21 
+
+ Randomisation  18 
+ 2019-03-21 17:59:21 
+
+ Randomisation  20 
+ 2019-03-21 17:59:21 
+
+ Randomisation  19 
+ 2019-03-21 17:59:21 
+
+ Randomisation  21 
+ 2019-03-21 17:59:21 
+
+ Randomisation  23 
+ 2019-03-21 17:59:21 
+
+ Randomisation  22 
+ 2019-03-21 17:59:21 
+
+ Randomisation  24 
+ 2019-03-21 17:59:21 
+
+ Randomisation  26 
+ 2019-03-21 17:59:21 
+
+ Randomisation  27 
+ 2019-03-21 17:59:21 
+
+ Randomisation  25 
+ 2019-03-21 17:59:21 
+
+ Randomisation  29 
+ 2019-03-21 17:59:21 
+
+ Randomisation  28 
+ 2019-03-21 17:59:21 
+
+ Randomisation  30 
+ 2019-03-21 17:59:21 
+
+ Randomisation  32 
+ 2019-03-21 17:59:21 
+
+ Randomisation  31 
+ 2019-03-21 17:59:21 
+
+ Randomisation  33 
+ 2019-03-21 17:59:21 
+
+ Randomisation  35 
+ 2019-03-21 17:59:21 
+
+ Randomisation  34 
+ 2019-03-21 17:59:21 
+
+ Randomisation  36 
+ 2019-03-21 17:59:21 
+
+ Randomisation  38 
+ 2019-03-21 17:59:21 
+
+ Randomisation  37 
+ 2019-03-21 17:59:21 
+
+ Randomisation  39 
+ 2019-03-21 17:59:21 
+
+ Randomisation  41 
+ 2019-03-21 17:59:21 
+
+ Randomisation  40 
+ 2019-03-21 17:59:21 
+
+ Randomisation  42 
+ 2019-03-21 17:59:21 
+
+ Randomisation  44 
+ 2019-03-21 17:59:21 
+
+ Randomisation  43 
+ 2019-03-21 17:59:21 
+
+ Randomisation  45 
+ 2019-03-21 17:59:21 
+
+ Randomisation  47 
+ 2019-03-21 17:59:22 
+
+ Randomisation  46 
+ 2019-03-21 17:59:22 
+
+ Randomisation  48 
+ 2019-03-21 17:59:22 
+
+ Randomisation  50 
+ 2019-03-21 17:59:22 
+
+ Randomisation  49 
+ 2019-03-21 17:59:22 
+
+ Randomisation  51 
+ 2019-03-21 17:59:22 
+
+ Randomisation  53 
+ 2019-03-21 17:59:22 
+
+ Randomisation  52 
+ 2019-03-21 17:59:22 
+
+ Randomisation  54 
+ 2019-03-21 17:59:22 
+
+ Randomisation  56 
+ 2019-03-21 17:59:22 
+
+ Randomisation  55 
+ 2019-03-21 17:59:22 
+
+ Randomisation  57 
+ 2019-03-21 17:59:22 
+
+ Randomisation  59 
+ 2019-03-21 17:59:22 
+
+ Randomisation  58 
+ 2019-03-21 17:59:22 
+
+ Randomisation  60 
+ 2019-03-21 17:59:22 
+
+ Randomisation  62 
+ 2019-03-21 17:59:22 
+
+ Randomisation  61 
+ 2019-03-21 17:59:22 
+
+ Randomisation  63 
+ 2019-03-21 17:59:22 
+
+ Randomisation  65 
+ 2019-03-21 17:59:22 
+
+ Randomisation  64 
+ 2019-03-21 17:59:22 
+
+ Randomisation  66 
+ 2019-03-21 17:59:22 
+
+ Randomisation  68 
+ 2019-03-21 17:59:22 
+
+ Randomisation  67 
+ 2019-03-21 17:59:22 
+
+ Randomisation  69 
+ 2019-03-21 17:59:22 
+
+ Randomisation  71 
+ 2019-03-21 17:59:22 
+
+ Randomisation  70 
+ 2019-03-21 17:59:22 
+
+ Randomisation  72 
+ 2019-03-21 17:59:22 
+
+ Randomisation  74 
+ 2019-03-21 17:59:22 
+
+ Randomisation  73 
+ 2019-03-21 17:59:22 
+
+ Randomisation  75 
+ 2019-03-21 17:59:22 
+
+ Randomisation  77 
+ 2019-03-21 17:59:22 
+
+ Randomisation  76 
+ 2019-03-21 17:59:22 
+
+ Randomisation  78 
+ 2019-03-21 17:59:22 
+
+ Randomisation  80 
+ 2019-03-21 17:59:22 
+
+ Randomisation  79 
+ 2019-03-21 17:59:22 
+
+ Randomisation  81 
+ 2019-03-21 17:59:22 
+
+ Randomisation  83 
+ 2019-03-21 17:59:22 
+
+ Randomisation  82 
+ 2019-03-21 17:59:23 
+
+ Randomisation  84 
+ 2019-03-21 17:59:23 
+
+ Randomisation  86 
+ 2019-03-21 17:59:23 
+
+ Randomisation  85 
+ 2019-03-21 17:59:23 
+
+ Randomisation  87 
+ 2019-03-21 17:59:23 
+
+ Randomisation  89 
+ 2019-03-21 17:59:23 
+
+ Randomisation  88 
+ 2019-03-21 17:59:23 
+
+ Randomisation  90 
+ 2019-03-21 17:59:23 
+
+ Randomisation  92 
+ 2019-03-21 17:59:23 
+
+ Randomisation  91 
+ 2019-03-21 17:59:23 
+
+ Randomisation  93 
+ 2019-03-21 17:59:23 
+
+ Randomisation  95 
+ 2019-03-21 17:59:23 
+
+ Randomisation  94 
+ 2019-03-21 17:59:23 
+
+ Randomisation  96 
+ 2019-03-21 17:59:23 
+
+ Randomisation  98 
+ 2019-03-21 17:59:23 
+
+ Randomisation  97 
+ 2019-03-21 17:59:23 
+
+ Randomisation  99 
+ 2019-03-21 17:59:23 
+
+ Randomisation  100 
+ 2019-03-21 17:59:23 
+Results of randomisations printed to file: ./test/randomizations_cnmtf_my_experiment.RData 
+ 2019-03-21 17:59:24 

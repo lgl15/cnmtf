@@ -4,21 +4,21 @@
 \alias{score.cnmtf}
 \title{Calculate Omega matrix}
 \usage{
-score.cnmtf(R, out.cat = NULL, pop = NULL, log.file = NULL,
-  name.exp = NULL, name.init = NULL, work.dat = NULL,
-  define.k = c("user", "NMTF", "PCA"), k1 = NULL, k2 = NULL,
-  estimate.par = TRUE, wparameters = NULL, save.parameters = TRUE,
-  run.t.exp = NULL, run.t.par = 4, range.parameters = NULL,
-  sequential.estimation = FALSE, max.try0 = 4, tao.sc = 4,
-  snps.known = NULL, calcObj = NULL, calcObj2 = NULL, init = NULL,
-  parallel.opt = FALSE, n.cores = 2, iters = NULL, do.U = FALSE,
-  display.iters = TRUE, score.pvalues = c(TRUE, FALSE, "only"),
-  randomisations = 50, random.parallel = FALSE, file.Gu = file.Gu)
+score.cnmtf(R, out = NULL, pop = NULL, log.file = NULL, name.exp = NULL,
+  name.init = NULL, work.dat = NULL, define.k = c("user", "NMTF", "PCA"),
+  k1 = NULL, k2 = NULL, estimate.par = TRUE, wparameters = NULL,
+  save.parameters = TRUE, run.t.exp = NULL, run.t.par = 4,
+  range.parameters = NULL, sequential.estimation = FALSE, max.try0 = 4,
+  tao.sc = 4, snps.known = NULL, calcObj = NULL, calcObj2 = NULL,
+  init = NULL, parallel.opt = FALSE, n.cores = 2, iters = NULL,
+  do.U = FALSE, display.iters = TRUE, score.pvalues = c(TRUE, FALSE,
+  "only"), randomisations = 50, random.parallel = FALSE,
+  file.Gu = file.Gu, norm.Lu = FALSE)
 }
 \arguments{
 \item{R}{Relationship matrix}
 
-\item{out.cat}{Categorical outcome variable}
+\item{out}{Categorical outcome variable}
 
 \item{pop}{Population variable}
 
@@ -30,7 +30,7 @@ score.cnmtf(R, out.cat = NULL, pop = NULL, log.file = NULL,
 
 \item{work.dat}{Folder to save and load workspaces}
 
-\item{define.k}{Method to define \code{k1}. It can be: \code{c("user","NMTF","PCA")}}
+\item{define.k}{Method to define \code{k1}. It can be: \code{c("user","method","PCA")}}
 
 \item{k1}{Number of SNV clusters}
 
@@ -82,7 +82,7 @@ score.cnmtf(R, out.cat = NULL, pop = NULL, log.file = NULL,
 The function internally generates:
 \itemize{
 \item Estimation of number of SNP clusters (k1)
-\item Estimation of penalisation parameters (alpha1, alpha2, gamma1, gamma2)
+\item Estimation of penalisation parameters (gamma1, gamma3, gamma2)
 }
 
 The function prints the following objects in workspaces:

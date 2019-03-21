@@ -4,10 +4,10 @@
 \alias{consensus.clust}
 \title{Find consensus clustering and SNV score}
 \usage{
-consensus.clust(R, Wv, Wu, HLH, Vo, k, lparameters, iters, labelsU, labelsV,
-  run.t, calcObj, calcObj2, init, parallel.opt, n.cores = NULL,
-  set.alg = NULL, set.clus.V = NULL, export.res = TRUE, V.init = NULL,
-  U.init = NULL, do.U = TRUE, do.V = TRUE, do.O = TRUE,
+consensus.clust(R, Wv, Wu = NULL, DWD = NULL, HLH, Vo, k, lparameters,
+  iters, labelsU, labelsV, run.t, calcObj, calcObj2, init, parallel.opt,
+  n.cores = NULL, set.alg = NULL, set.clus.V = NULL, export.res = TRUE,
+  V.init = NULL, U.init = NULL, do.U = TRUE, do.V = TRUE, do.O = TRUE,
   find.parameters = FALSE, estimate.penalisation = FALSE,
   display.iters = FALSE)
 }

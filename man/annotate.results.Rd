@@ -4,21 +4,23 @@
 \alias{annotate.results}
 \title{Annotate prioritised SNVs}
 \usage{
-annotate.results(lconsortiums, ltrait.project, snps.known2,
-  use.web.service = TRUE, explore.gwas = FALSE, email.david)
+annotate.results(name.exp = NULL, snps.known = NULL, snps.known2 = NULL,
+  add.david.annotations = TRUE, email.david = NULL,
+  add.ensemble.conseq = FALSE, work.dat = NULL, tmap = NULL,
+  file.LD = NULL, ld.tao = 0.8)
 }
 \arguments{
+\item{snps.known2}{List of known associations}
+
+\item{add.david.annotations}{Logical. Use DAVID web service or export/import manually}
+
+\item{email.david}{Email account registered in DAVID.}
+
 \item{lconsortiums}{List of data consortiums to merge}
 
 \item{ltrait.project}{List of traits to merge}
 
-\item{snps.known2}{List of known associations}
-
-\item{use.web.service}{Logical. Use DAVID web service or export/import manually}
-
 \item{explore.gwas}{Logical. Explore mutations from GWAS cataloge}
-
-\item{email.david}{Email account registered in DAVID.}
 }
 \value{
 \itemize{

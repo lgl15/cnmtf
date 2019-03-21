@@ -116,7 +116,8 @@
 	                        random.parallel = FALSE, #Run the radomisations in parallel
 
 	                        #Construction of penalisation terms
-													file.Gu = file.Gu #Workspace with adjancency matrix
+													file.Gu = file.Gu, #Workspace with adjancency matrix
+													norm.Lu = FALSE #Normalised Laplacian option
 	)
 	{
 
@@ -215,8 +216,8 @@
 
 				      	#Run the algorithm and extract rho parameters
 				      	res.clust = consensus.clust(R=R,
-				      															Wv=0, Wu=0,
-				      															HLH=0, Vo=0,
+				      															Wu=0,
+				      															HLH=0, Vo=0, DWD = 0,
 				      															k=k, lparameters = lparameters.0,
 				      															iters = iters,
 				      															labelsU = labelsU, labelsV = labelsV,
@@ -244,7 +245,7 @@
 
 				    #Define optimum k1
 				    cat("A plot was created in your work.data folder ( k1k2_name.exp.pdf ).")
-				    decision.k1k2 = as.numeric(readline("Check that plot and input optimum k1:" ))
+				    decision.k1k2 = as.numeric(readline("Check the generated plot and input optimum k1:" ))
 				    if(decision.k1k2 > 0){
 				    	k1 = decision.k1k2
 				    }else{
@@ -350,9 +351,27 @@
 				      stop("Dimensions of input Wu and R do not match.")
 				    }
 
-				    #Calculate its laplacian matrix
-				    Du = diag(rowSums(Wu))
-				    Lu = Du - Wu
+				  	#Calculate its laplacian matrix
+				  	Du = diag(rowSums(Wu))
+				  	DWD = NULL # Default NULL for normalised Laplacian term
+
+				  	if( norm.Lu == TRUE ){ # If normalised Laplacian is required
+
+				  		# Tracks the operations
+				  		msg <- paste("Calculating Normalised Laplacian:", "\n", as.character(Sys.time()), "\n", sep=" "); cat(msg); cat(msg, file = log.file, append = TRUE)
+
+				  		I = diag(rep(1, nrow(Wu))) # Identity matrix
+				  		Lu = laplacian_matrix(Gu, norm = TRUE) # Calculate the Normalised Laplacian of the network
+				  		Lu = as.matrix( Lu ) # Extract Normalised Laplacian
+				  		DWD = I - Lu	# Recalculate one of the terms within the normalised Laplacian (required for update rules)
+
+
+				  	}else{ # Otherwise
+
+				  		Lu = Du - Wu	# Calculate the Laplacian of the network
+				  	}
+
+
 
 				  }else{
 				    Wu = NULL
@@ -415,12 +434,11 @@
 				  																log.file = log.file,
 
 				  																#Penalisation terms
-				  																Wv = Wv, Wu = Wu,
-				  																HLH = HLH, Vo = Vo,
+				  																Wu = Wu,
+				  																HLH = HLH, Vo = Vo, DWD = DWD,
 
 				  																#iGraph objects
 				  																Gu = Gu, #iGraph for Wu (SNP-SNP network)
-				  																Gv = Gv, #iGraph for Wv (Patient-Patient network)
 
 				  																#Initialisations of matrices
 				  																V.init = V.init, U.init = U.init,
@@ -495,8 +513,8 @@
 
 				    #Run algorithm for experiment
 				    res.cnmtf[[1]] = consensus.clust(R = R,
-				                                     Wv = Wv, Wu = Wu,
-				                                     HLH = HLH, Vo = Vo,
+				                                     Wu = Wu,
+				                                     HLH = HLH, Vo = Vo, DWD = DWD,
 				                                     k=k, lparameters = lparameters,
 				                                     iters = iters,
 				                                     labelsU = labelsU, labelsV=labelsV,
@@ -559,8 +577,8 @@
 
 							        #Perform consensus clustering
 							        res.alg.ran =  consensus.clust(R=Rr,
-							                                       Wv=Wv, Wu=Wu,
-							                                       HLH=HLH, Vo=Vo,
+							                                       Wu=Wu,
+							                                       HLH=HLH, Vo=Vo, DWD = DWD,
 							                                       k=k, lparameters=lparameters,
 							                                       iters = iters,
 							                                       labelsU=labelsU, labelsV=labelsV,
@@ -589,8 +607,8 @@
 
 				        #Perform consensus clustering
 				        l.cnmtf.ran[[ran]] = consensus.clust(R=Rr,
-				                                             Wv=Wv, Wu=Wu,
-				                                             HLH=HLH, Vo=Vo,
+				                                             Wu=Wu,
+				                                             HLH=HLH, Vo=Vo, DWD = DWD,
 				                                             k=k, lparameters=lparameters,
 				                                             iters = iters,
 				                                             labelsU=labelsU, labelsV=labelsV,

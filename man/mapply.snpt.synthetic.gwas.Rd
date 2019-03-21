@@ -29,8 +29,7 @@ Other Preprocessing functions: \code{\link{coding.scheme}},
   \code{\link{construct.Vo}}, \code{\link{construct.Wu}},
   \code{\link{create.network}},
   \code{\link{degree.distribution}},
-  \code{\link{kernels.cnmtf}}, \code{\link{rownet}},
-  \code{\link{seed.snps}},
+  \code{\link{kernels.cnmtf}}, \code{\link{rownet.hub}},
   \code{\link{snpt.synthetic.gwas}}
 }
 \author{

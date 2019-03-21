@@ -20,7 +20,7 @@
 #' @param log.file Log file to track status of the function
 #'
 #Penalisation terms
-#' @param Wv,Wu Adjacency matrices to guide clustering of U and V
+#' @param Wu Adjacency matrix to guide clustering of U
 #' @param HLH Term to correct for population stratification
 
 #iGraph objects
@@ -69,12 +69,13 @@
 																log.file = NULL,
 
 	                              #Penalisation terms
-	                              Wv = NULL, Wu = NULL,
+	                              Wu = NULL,
 	                              HLH = NULL, Vo = NULL,
+																DWD = NULL,
 
 																#iGraph objects
 																Gu = NULL, #iGraph for Wu (SNP-SNP network)
-																Gv = NULL, #iGraph for Wv (Patient-Patient network)
+
 
 																#Initialisations
 																V.init = NULL, U.init = NULL,
@@ -145,7 +146,7 @@
 
 	            #Run the algorithm with parameters set to 0
 	            res.param.0 = consensus.clust(R = R,
-	                                          Wv = Wv, Wu = Wu,  #Providing all the penalisation terms to estimate maximum terms value
+	                                          Wu = Wu,  #Providing all the penalisation terms to estimate maximum terms value
 	                                          HLH = HLH, Vo = Vo,
 	                                          k=k, lparameters = opt.parameters,
 	                                          iters = iters,
@@ -332,7 +333,7 @@
 
 	                  #Run algorithm for experiment
 	                  res.param = consensus.clust(R = R,
-	                                              Wv = Wv, Wu = Wu,
+	                                              Wu = Wu,
 	                                              HLH = HLH, Vo = Vo,
 	                                              k = k, lparameters = lparameters.pp,
 	                                              iters = iters,
